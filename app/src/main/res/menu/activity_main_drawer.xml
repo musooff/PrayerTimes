@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_today"
+            android:icon="@drawable/ic_today_white"
+            android:title="Имруз" />
+        <item
+            android:id="@+id/nav_prayers"
+            android:icon="@drawable/ic_prayers_white"
+            android:title="Вактхо" />
+        <item
+            android:id="@+id/nav_quran"
+            android:icon="@drawable/ic_quran_white"
+            android:title="Курон" />
+        <item
+            android:id="@+id/nav_qibla"
+            android:icon="@drawable/ic_qibla_white"
+            android:title="Кибла" />
+        <item
+            android:id="@+id/nav_lib"
+            android:icon="@drawable/ic_library_white"
+            android:title="Китобхоna" />
+        <item
+            android:id="@+id/nav_more"
+            android:icon="@drawable/ic_more_white"
+            android:title="Гайра" />
+    </group>
+
+
+</menu>
