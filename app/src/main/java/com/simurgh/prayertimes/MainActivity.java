@@ -128,55 +128,13 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        /* here I will set notify service*/
-        setAlarm();
+
 
 
 
 
     }
 
-    private void setAlarm() {
-        try {
-            JSONObject today = new JSONObject(sharedPreferences.getString("todayJson","{None}"));
-            JSONObject timings = today.getJSONObject("timings");
-            JSONObject date = today.getJSONObject("date");
-/*
-            String[] times = new String[]{timings.getString("Fajr").substring(0,timings.getString("Fajr").indexOf(" ")),
-                    timings.getString("Sunrise").substring(0,timings.getString("Sunrise").indexOf(" ")),
-                    timings.getString("Dhuhr").substring(0,timings.getString("Dhuhr").indexOf(" ")),
-                    timings.getString("Asr").substring(0,timings.getString("Asr").indexOf(" ")),
-                    timings.getString("Maghrib").substring(0,timings.getString("Maghrib").indexOf(" ")),
-                    timings.getString("Isha").substring(0,timings.getString("Isha").indexOf(" "))};
-*/
-            String[] times = new String[]{timings.getString("Fajr"),
-                    timings.getString("Sunrise"),
-                    timings.getString("Dhuhr"),
-                    timings.getString("Asr"),
-                    timings.getString("Maghrib"),
-                    timings.getString("Isha")};
-            String readable = date.getString("readable");
-            SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm",Locale.US);
-            SimpleDateFormat testDateFormat = new SimpleDateFormat("dd MM yyyy HH:mm",Locale.US);
-
-            String[] alarmTimes = new String[6];
-            for (int i = 0; i < 6; i++){
-                alarmTimes[i] = readable+times[i];
-                Date alarm = apiDateFormat.parse(alarmTimes[i]);
-                Log.e("Alarm",testDateFormat.format(alarm));
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 16);
-        calendar.set(Calendar.MINUTE, 25);
-        calendar.set(Calendar.SECOND, 0);
-    }
 
     @Override
     public void onBackPressed() {
@@ -228,11 +186,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_qibla) {
             mViewPager.setCurrentItem(3);
         } else if (id == R.id.nav_more) {
-            mViewPager.setCurrentItem(4);
-
+            mViewPager.setCurrentItem(5);
         }
         else if (id == R.id.nav_lib){
-            mViewPager.setCurrentItem(5);
+            mViewPager.setCurrentItem(4);
 
         }
 

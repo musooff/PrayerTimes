@@ -40,7 +40,7 @@ public class MosqueFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_qibla,container,false);
+        View view = inflater.inflate(R.layout.content_mosques,container,false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_mosques);
 

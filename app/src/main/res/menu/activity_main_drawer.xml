@@ -16,12 +16,12 @@
             android:title="Курон" />
         <item
             android:id="@+id/nav_qibla"
-            android:icon="@drawable/ic_qibla_white"
-            android:title="Кибла" />
+            android:icon="@drawable/ic_mosque_white"
+            android:title="Масчидхо" />
         <item
             android:id="@+id/nav_lib"
             android:icon="@drawable/ic_library_white"
-            android:title="Китобхоna" />
+            android:title="Китобхонa" />
         <item
             android:id="@+id/nav_more"
             android:icon="@drawable/ic_more_white"

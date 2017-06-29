@@ -1,6 +1,7 @@
 package com.simurgh.prayertimes;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -17,8 +18,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.cleveroad.loopbar.widget.LoopBarView;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,9 +33,14 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
+
+import static android.R.attr.category;
+import static android.R.attr.dial;
 
 /**
  * Created by moshe on 26/06/2017.
@@ -83,6 +88,28 @@ public class TodayFragment extends Fragment {
         tv_read_name = (TextView)view.findViewById(R.id.tv_read_name);
         tv_share = (TextView)view.findViewById(R.id.tv_share);
 
+        /*Get Shared Preference*/
+        sharedPreferences = getActivity().getSharedPreferences("PrayerData",0);
+        editor = sharedPreferences.edit();
+        editor.apply();
+
+
+        setOneName();
+        setOneHadis();
+        setOneAyah();
+        setOneDua();
+
+
+
+        // open names activity
+        tv_read_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent names = new Intent(getActivity(),NamesActivity.class);
+                startActivity(names);
+            }
+        });
+
 
         iv_notification = (ImageView)view.findViewById(R.id.iv_notification);
         iv_notification.setTag("fajrNot");
@@ -93,10 +120,6 @@ public class TodayFragment extends Fragment {
             }
         });
 
-        /*Get Shared Preference*/
-        sharedPreferences = getActivity().getSharedPreferences("PrayerData",0);
-        editor = sharedPreferences.edit();
-        editor.apply();
 
 
         // for now just hide remaining time;
@@ -112,6 +135,190 @@ public class TodayFragment extends Fragment {
         setPrayerTimes();
         return view;
 
+    }
+
+    private void setOneDua() {
+        Random random = new Random();
+        int randomInt = random.nextInt(10);
+        try {
+            InputStream inputStream = getActivity().getResources().getAssets().open("duas.json");
+            JSONObject jsonObject = new JSONObject(readStream(inputStream));
+            JSONArray data = jsonObject.getJSONArray("data");
+            String arabic = data.getJSONObject(randomInt).getString("arabic");
+            String tajikTranscribed = data.getJSONObject(randomInt).getString("tajikTranscribed");
+            String tajik = data.getJSONObject(randomInt).getString("tajik");
+            String name = data.getJSONObject(randomInt).getString("name");
+
+            tv_dua_arabic.setText(arabic);
+            tv_dua_arabic_transcribed.setText(tajikTranscribed);
+            tv_dua_name.setText(name);
+            tv_dua_tajik.setText(tajik);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setOneAyah() {
+
+        if (sharedPreferences.getBoolean("todayVerseAvailable",false)){ // if there is it returns true
+
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(sharedPreferences.getString("todayVerse","none"));
+                final JSONArray data = jsonObject.getJSONArray("data");
+                JSONObject tajik = data.getJSONObject(1);
+                final String text = tajik.getString("text");
+                tv_verse.setText(text);
+
+                JSONObject surah = tajik.getJSONObject("surah");
+                final String surahName = surah.getString("englishName");
+                final int surahNumber = surah.getInt("number");
+
+                final int verseNumber = tajik.getInt("numberInSurah");
+
+                tv_verse_name.setText(surahName+"("+surahNumber+":"+verseNumber+")");
+
+
+                tv_read_verse.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Dialog dialog = new Dialog(getActivity());
+                        dialog.setContentView(R.layout.dialog_verve);
+
+                        TextView diaArabic = (TextView)dialog.findViewById(R.id.tv_arabic);
+                        TextView diaTajik = (TextView)dialog.findViewById(R.id.tv_eng);
+                        TextView diaTranslate = (TextView)dialog.findViewById(R.id.tv_tran);
+                        TextView tajName = (TextView)dialog.findViewById(R.id.tv_tajName);
+                        TextView araName = (TextView)dialog.findViewById(R.id.tv_araName);
+
+                        TextView tvID = (TextView)dialog.findViewById(R.id.tv_id);
+
+
+                        try {
+                            JSONObject arabic = data.getJSONObject(0);
+                            diaArabic.setText(arabic.getString("text"));
+                            //diaTajik.setText();
+                            diaTranslate.setText(text);
+
+                            tajName.setText(surahName);
+                            araName.setText(arabic.getJSONObject("surah").getString("name"));
+
+                            //tvID.setText(surahNumber+":"+verseNumber);
+
+
+                            dialog.show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+
+        }
+        else {
+            Random randomAyah = new Random();
+            int ranAyah = randomAyah.nextInt(6236)+1;
+            String str_url = "http://api.alquran.cloud/ayah/"+ranAyah+"/editions/quran-simple,tg.ayati";
+            new DownloadAyah().execute(str_url);
+
+        }
+
+    }
+
+    private void setOneHadis() {
+        Random random = new Random();
+        int randomInt = random.nextInt(15);
+        try {
+            InputStream inputStream = getActivity().getResources().getAssets().open("hadises.json");
+            JSONObject jsonObject = new JSONObject(readStream(inputStream));
+            JSONArray data = jsonObject.getJSONArray("data");
+            String hadis = data.getJSONObject(randomInt).getString("hadis");
+            String source = data.getJSONObject(randomInt).getString("soursce");
+            tv_hadis_name.setText(source);
+            tv_hadis.setText(hadis);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setOneName() {
+        // set random one from 99 names
+        Random random = new Random();
+        String names = getResources().getString(R.string.names);
+        String[] eachNames = names.split("\n");
+        String[] ignoreFirstEmpty = Arrays.copyOfRange(eachNames,1,eachNames.length);
+        //Log.e("size",ignoreFirstEmpty[0]);
+        int randomInt = random.nextInt(99);
+        Log.e("rand",randomInt+"");
+        String[] singleName;
+        singleName = eachNames[randomInt].split(" — ");
+        tv_name_arabic.setText(singleName[1]);
+        tv_name_arabic_transcribed.setText(singleName[0]);
+        tv_name_tajik.setText(singleName[2]);
+    }
+
+
+    public class DownloadAyah extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
+                return readStream(in);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                JSONObject jsonObject= new JSONObject(s);
+                JSONArray data = jsonObject.getJSONArray("data");
+                JSONObject tajik = data.getJSONObject(1);
+                String text = tajik.getString("text");
+                tv_verse.setText(text);
+
+                JSONObject surah = tajik.getJSONObject("surah");
+                String surahName = surah.getString("englishName");
+                int surahNumber = surah.getInt("number");
+
+                int verseNumber = tajik.getInt("numberInSurah");
+
+                tv_verse_name.setText(surahName+"("+surahNumber+":"+verseNumber+")");
+
+                editor.putBoolean("todayVerseAvailable",true);
+                editor.putString("todayVerse",jsonObject.toString());
+                editor.apply();
+
+                setPrayerTimes();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
 
@@ -300,7 +507,7 @@ public class TodayFragment extends Fragment {
         // custom dialog
         final Dialog dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.radiobutton_dialog);
+        dialog.setContentView(R.layout.dialog_radiobuttons);
         List<String> stringList=new ArrayList<>();  // here is list
         stringList.add("Хотиррасони пешфарз");
         stringList.add("Азон");

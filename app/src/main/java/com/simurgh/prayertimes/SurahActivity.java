@@ -1,18 +1,16 @@
 package com.simurgh.prayertimes;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -30,52 +28,67 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by moshe on 27/06/2017.
+ * Created by moshe on 29/06/2017.
  */
 
-public class QuranFragment extends Fragment {
+public class SurahActivity extends AppCompatActivity {
 
-
-    ArrayList<DataSuraNames> dataSuraNames;
+    ArrayList<DataAyats> dataAyatses;
 
     RecyclerView mRecyclerView;
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
-    @Nullable
+    int id;
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_quran,container,false);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_surah);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_surahs);
+        mRecyclerView = (RecyclerView) findViewById(R.id.rv_ayats);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
 
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        dataSuraNames = new ArrayList<>();
+        dataAyatses = new ArrayList<>();
 
-        sharedPreferences = getActivity().getSharedPreferences("PrayerData",0);
+        sharedPreferences = getSharedPreferences("PrayerData",0);
         editor = sharedPreferences.edit();
         editor.apply();
-        DataSurahAdapter mAdapter = new DataSurahAdapter(getContext(),dataSuraNames);
+        DataAyatsAdapter mAdapter = new DataAyatsAdapter(getApplicationContext(),dataAyatses);
         mRecyclerView.setAdapter(mAdapter);
-        if (sharedPreferences.getBoolean("surahsAvailable",false)){
+
+        Bundle extras = getIntent().getExtras();
+        String arabicName = extras.getString("name");
+        String eng = extras.getString("eng");
+        id = extras.getInt("id");
+
+        TextView tv_eng,tv_ara;
+        tv_eng = (TextView)findViewById(R.id.tv_eng);
+        tv_ara = (TextView)findViewById(R.id.tv_arabic);
+
+        tv_eng.setText(eng);
+        tv_ara.setText(arabicName);
+
+        if (sharedPreferences.getBoolean("ayatsAvailable"+id,false)){
             // just open
             JSONObject jsonObject = null;
             try {
-                jsonObject = new JSONObject(sharedPreferences.getString("surahs","none"));
+                jsonObject = new JSONObject(sharedPreferences.getString("ayats"+id,"none"));
                 JSONArray data = jsonObject.getJSONArray("data");
-                for (int i = 0; i <data.length(); i++){
-                    int number = data.getJSONObject(i).getInt("number");
-                    String name = data.getJSONObject(i).getString("name");
-                    String englishName = data.getJSONObject(i).getString("englishName");
-                    String englishNameTranslation = data.getJSONObject(i).getString("englishNameTranslation");
-                    int numberOfAyahs = data.getJSONObject(i).getInt("numberOfAyahs");
-                    String revelationType = data.getJSONObject(i).getString("revelationType");
-                    dataSuraNames.add(new DataSuraNames(name,englishName,englishNameTranslation,number));
+                int numberOfAyahs = data.getJSONObject(0).getInt("numberOfAyahs");
+                for (int i = 0; i < numberOfAyahs; i++){
+                    int numberInSurah = data.getJSONObject(0).getJSONArray("ayahs").getJSONObject(i).getInt("numberInSurah");
+                    String name = data.getJSONObject(0).getJSONArray("ayahs").getJSONObject(i).getString("text");
+                    String englishName = data.getJSONObject(2).getJSONArray("ayahs").getJSONObject(i).getString("text");
+                    String englishNameTranslation = data.getJSONObject(1).getJSONArray("ayahs").getJSONObject(i).getString("text");
+
+                    dataAyatses.add(new DataAyats(name,englishName,englishNameTranslation,numberInSurah));
                 }
 
                 mRecyclerView.getAdapter().notifyDataSetChanged();
@@ -85,20 +98,18 @@ public class QuranFragment extends Fragment {
 
         }
         else {
-            new DownloadSuras().execute();
+            new DownloadAyats().execute(id);
         }
 
 
 
-
-        return view;
-
     }
 
-    public class DownloadSuras extends AsyncTask<Void,Void,String>{
+
+    public class DownloadAyats extends AsyncTask<Integer,Void,String> {
         @Override
-        protected String doInBackground(Void... params) {
-            String str_url = "http://api.alquran.cloud/surah";
+        protected String doInBackground(Integer... params) {
+            String str_url = "http://api.alquran.cloud/surah/"+params[0]+"/editions/quran-simple,tg.ayati,en.transliteration";
             try {
                 URL url = new URL(str_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
@@ -119,22 +130,22 @@ public class QuranFragment extends Fragment {
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 JSONArray data = jsonObject.getJSONArray("data");
-                for (int i = 0; i <data.length(); i++){
-                    int number = data.getJSONObject(i).getInt("number");
-                    String name = data.getJSONObject(i).getString("name");
-                    String englishName = data.getJSONObject(i).getString("englishName");
-                    String englishNameTranslation = data.getJSONObject(i).getString("englishNameTranslation");
-                    int numberOfAyahs = data.getJSONObject(i).getInt("numberOfAyahs");
-                    String revelationType = data.getJSONObject(i).getString("revelationType");
-                    dataSuraNames.add(new DataSuraNames(name,englishName,englishNameTranslation,number));
+                int numberOfAyahs = data.getJSONObject(0).getInt("numberOfAyahs");
+                for (int i = 0; i < numberOfAyahs; i++){
+                    int numberInSurah = data.getJSONObject(0).getJSONArray("ayahs").getJSONObject(i).getInt("numberInSurah");
+                    String name = data.getJSONObject(0).getJSONArray("ayahs").getJSONObject(i).getString("text");
+                    String englishName = data.getJSONObject(2).getJSONArray("ayahs").getJSONObject(i).getString("text");
+                    String englishNameTranslation = data.getJSONObject(1).getJSONArray("ayahs").getJSONObject(i).getString("text");
+
+                    dataAyatses.add(new DataAyats(name,englishName,englishNameTranslation,numberInSurah));
                 }
 
                 mRecyclerView.getAdapter().notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            editor.putString("surahs",s);
-            editor.putBoolean("surahsAvailable",true);
+            editor.putString("ayats"+id,s);
+            editor.putBoolean("ayatsAvailable"+id,true);
             editor.apply();
         }
     }
@@ -161,14 +172,14 @@ public class QuranFragment extends Fragment {
         return stringBuilder.toString();
     }
 
-    public class DataSurahAdapter extends
-            RecyclerView.Adapter<DataSurahAdapter.ViewHolder> {
+    public class DataAyatsAdapter extends
+            RecyclerView.Adapter<DataAyatsAdapter.ViewHolder> {
 
-        private ArrayList<DataSuraNames> mCategory;
+        private ArrayList<DataAyats> mCategory;
         private Context mContext;
 
 
-        public DataSurahAdapter(Context context, ArrayList<DataSuraNames> category) {
+        public DataAyatsAdapter(Context context, ArrayList<DataAyats> category) {
             mCategory = category;
             mContext = context;
         }
@@ -186,7 +197,7 @@ public class QuranFragment extends Fragment {
             LayoutInflater inflater = LayoutInflater.from(context);
 
             // Inflate the custom layout
-            View categoryView = inflater.inflate(R.layout.single_surah, parent, false);
+            View categoryView = inflater.inflate(R.layout.single_ayat, parent, false);
 
             // Return a new holder instance
             ViewHolder viewHolder = new ViewHolder(categoryView);
@@ -196,18 +207,14 @@ public class QuranFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             // Get the data model based on position
-            final DataSuraNames category = mCategory.get(position);
+            final DataAyats category = mCategory.get(position);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 
 
                 @Override
                 public void onClick(View v) {
-                    Intent surah = new Intent(getActivity(),SurahActivity.class);
-                    surah.putExtra("name",category.getNameArabic());
-                    surah.putExtra("eng",category.getNameArabicTranscripted());
-                    surah.putExtra("id",category.getId());
-                    startActivity(surah);
+
                 }
             });
 
@@ -218,7 +225,7 @@ public class QuranFragment extends Fragment {
             TextView id = holder.id;
 
             arabic.setText(category.getNameArabic());
-            english.setText(category.getNameArabicTranscripted());
+            //english.setText(category.getNameArabicTranscripted());
             translated.setText(category.getNameEng());
             id.setText(category.getId()+"");
 

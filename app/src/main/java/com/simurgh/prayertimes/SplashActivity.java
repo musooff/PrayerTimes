@@ -1,6 +1,8 @@
 package com.simurgh.prayertimes;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +36,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -118,6 +123,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
             setDefaultPreferences();
+
             editor.putBoolean("firstRun", false);
             editor.apply();
         }
@@ -153,7 +159,91 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-    private String readStream(InputStream is) {
+    private void setAlarm() {
+
+
+        SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm",Locale.US);
+        SimpleDateFormat testDateFormat = new SimpleDateFormat("dd MM yyyy HH:mm:ss",Locale.US);
+
+        String[] names = new String[]{"Бомдод","Офтоббарои","Пешин","Аср","Шом","Хуфтан"};
+
+        try {
+
+            int[] notSettings = new int[]{sharedPreferences.getInt("fajrNot",0),
+                    sharedPreferences.getInt("sunriseNot",3),
+                    sharedPreferences.getInt("dhuhrNot",0),
+                    sharedPreferences.getInt("asrNot",0),
+                    sharedPreferences.getInt("maghribNot",0),
+                    sharedPreferences.getInt("ishaNot",0)};
+
+            JSONObject today = new JSONObject(sharedPreferences.getString("todayJson","{None}"));
+            JSONObject timings = today.getJSONObject("timings");
+            JSONObject date = today.getJSONObject("date");
+/*
+            String[] times = new String[]{timings.getString("Fajr").substring(0,timings.getString("Fajr").indexOf(" ")),
+                    timings.getString("Sunrise").substring(0,timings.getString("Sunrise").indexOf(" ")),
+                    timings.getString("Dhuhr").substring(0,timings.getString("Dhuhr").indexOf(" ")),
+                    timings.getString("Asr").substring(0,timings.getString("Asr").indexOf(" ")),
+                    timings.getString("Maghrib").substring(0,timings.getString("Maghrib").indexOf(" ")),
+                    timings.getString("Isha").substring(0,timings.getString("Isha").indexOf(" "))};
+*/
+            String[] times = new String[]{timings.getString("Fajr"),
+                    timings.getString("Sunrise"),
+                    timings.getString("Dhuhr"),
+                    timings.getString("Asr"),
+                    timings.getString("Maghrib"),
+                    timings.getString("Isha")};
+
+            String readable = date.getString("readable");
+
+            String[] alarmTimes = new String[6];
+            for (int i = 0; i < 6; i++){
+                alarmTimes[i] = readable+" "+times[i];
+                Date alarm = apiDateFormat.parse(alarmTimes[i]);
+                Log.e("Alarm",testDateFormat.format(alarm));
+
+                Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
+                notificationService.putExtra(NotificationService.NOTIFICATION_SOUND,notSettings[i]);
+                notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Намози "+names[i]);
+                //This is alarm manager
+                PendingIntent pi = PendingIntent.getBroadcast(this, 0 , notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
+                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+                am.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTime(),
+                        AlarmManager.INTERVAL_DAY, pi);
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // set Test Alarm
+        Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
+        notificationService.putExtra(NotificationService.NOTIFICATION_SOUND,1);
+        notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Намози "+"Test");
+
+
+        /*
+        try {
+            Date testDate = apiDateFormat.parse("29 Jun 2017 03:07");
+            //This is alarm manager
+            PendingIntent pi = PendingIntent.getBroadcast(this, 0 , notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+            am.setRepeating(AlarmManager.RTC_WAKEUP, testDate.getTime(),
+                    AlarmManager.INTERVAL_DAY, pi);
+            Date today = new Date();
+            Log.e("alarm",apiDateFormat.format(testDate));
+            Log.e("now",apiDateFormat.format(today));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+*/
+    }
+
+
+    public String readStream(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -277,6 +367,8 @@ public class SplashActivity extends AppCompatActivity {
                 editor.apply();
 
 
+                /* here I will set notify service*/
+                setAlarm();
 
             } catch (JSONException e) {
                 e.printStackTrace();

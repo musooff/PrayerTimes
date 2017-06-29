@@ -3,7 +3,6 @@ package com.simurgh.prayertimes;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -460,7 +459,7 @@ public class PrayersFragment extends Fragment {
         // custom dialog
         final Dialog dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.radiobutton_dialog);
+        dialog.setContentView(R.layout.dialog_radiobuttons);
         List<String> stringList=new ArrayList<>();  // here is list
         stringList.add("Хотиррасони пешфарз");
         stringList.add("Азон");

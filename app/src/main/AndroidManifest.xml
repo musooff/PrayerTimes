@@ -26,6 +26,9 @@
         </activity>
         <activity android:name=".MosqueActivity" />
         <activity android:name=".BookActivity"></activity>
+        <receiver android:name=".NotificationService"/>
+        <activity android:name=".SurahActivity"/>
+        <activity android:name=".NamesActivity"/>
     </application>
 
 </manifest>
