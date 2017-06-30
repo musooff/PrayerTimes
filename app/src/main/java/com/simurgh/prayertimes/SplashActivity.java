@@ -24,6 +24,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,8 +63,12 @@ public class SplashActivity extends AppCompatActivity {
         editor.apply();
 
 
-        /*Get todays prayer timings*/
+        /*Get todays date and download times for the month*/
         final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Date today = new Date(timestamp.getTime());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
+        final String strDate = dateFormat.format(today);
+        Log.e("date",strDate);
 
 
         if (sharedPreferences.getBoolean("firstRun",true)) {
@@ -114,8 +119,8 @@ public class SplashActivity extends AppCompatActivity {
 
                                 Log.e("city",cityName);
 
-                                new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
-                                new GetPrayerTimesMonth().execute(new int[]{6,2017});
+                                //new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
+                                new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
                             }
                         }
                     });
@@ -124,9 +129,17 @@ public class SplashActivity extends AppCompatActivity {
 
             setDefaultPreferences();
 
+            setBookDownloads();
+
             editor.putBoolean("firstRun", false);
             editor.apply();
         }
+        if (sharedPreferences.getString(strDate,"none").equals("none")){
+            //download this months prayer times;
+            new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
+        }
+
+
         else {
             Intent main = new Intent(SplashActivity.this,MainActivity.class);
             startActivity(main);
@@ -146,6 +159,16 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         */
+    }
+
+    private void setBookDownloads() {
+        editor.putBoolean("book1_zindaginoma.pdf",false);
+        editor.putBoolean("book2_vasiyatho.pdf",false);
+        editor.putBoolean("book3_musnad.pdf",false);
+        editor.putBoolean("book4_duo.pdf",false);
+        editor.putBoolean("book5_savol.pdf",false);
+        editor.putBoolean("book6_chihil.pdf",false);
+        editor.apply();
     }
 
     private void setDefaultPreferences() {
@@ -267,11 +290,11 @@ public class SplashActivity extends AppCompatActivity {
 
 
 
-    public class GetPrayerTimesMonth extends AsyncTask<int[],Void,String> {
+    public class GetPrayerTimesMonth extends AsyncTask<String[],Void,String> {
 
-        int cal[];
+        String cal[];
         @Override
-        protected String doInBackground(int[]... params) {
+        protected String doInBackground(String[]... params) {
             cal = params[0];
 
             String str_url = "http://api.aladhan.com/calendar?latitude="+sharedPreferences.getFloat("locLat", Float.parseFloat("0.000000"))+"&longitude="+sharedPreferences.getFloat("locLong", Float.parseFloat("0.000000"))+"&timezonestring=Asia/Seoul&method=3&school=1&month="+cal[0]+"&year="+cal[1];
@@ -295,8 +318,8 @@ public class SplashActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            Log.e("sharedDate","cal"+cal[0]+""+cal[1]);
-            editor.putString("cal0"+cal[0]+""+cal[1],s);
+            Log.e("sharedDate",cal[0]+""+cal[1]);
+            editor.putString(cal[0]+""+cal[1],s);
             editor.putBoolean("data",true);
             editor.apply();
 
@@ -369,6 +392,53 @@ public class SplashActivity extends AppCompatActivity {
 
                 /* here I will set notify service*/
                 setAlarm();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public class DownloadAyah extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
+                return readStream(in);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                JSONObject jsonObject= new JSONObject(s);
+                JSONArray data = jsonObject.getJSONArray("data");
+                JSONObject tajik = data.getJSONObject(1);
+                String text = tajik.getString("text");
+
+                JSONObject surah = tajik.getJSONObject("surah");
+                String surahName = surah.getString("englishName");
+                int surahNumber = surah.getInt("number");
+
+                int verseNumber = tajik.getInt("numberInSurah");
+
+
+                editor.putBoolean("todayVerseAvailable",true);
+                editor.putString("todayVerse",jsonObject.toString());
+                editor.apply();
 
             } catch (JSONException e) {
                 e.printStackTrace();

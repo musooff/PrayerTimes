@@ -18,6 +18,8 @@ public class MosqueActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mosque);
 
+        getSupportActionBar().setTitle("Масчиди Чомеъ");
+
         Bundle extras = getIntent().getExtras();
         String name = extras.getString("name");
         String address = extras.getString("address");

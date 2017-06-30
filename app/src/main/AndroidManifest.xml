@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 
     <application
         android:allowBackup="true"
@@ -29,6 +31,10 @@
         <receiver android:name=".NotificationService"/>
         <activity android:name=".SurahActivity"/>
         <activity android:name=".NamesActivity"/>
+        <activity android:name=".DisclaimerActivity"/>
+        <activity android:name=".HelpActivity"/>
+        <activity android:name=".SettingsActivity"/>
+
     </application>
 
 </manifest>

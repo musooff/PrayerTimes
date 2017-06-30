@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -93,8 +94,6 @@ public class MainActivity extends AppCompatActivity
         editor = sharedPreferences.edit();
         editor.apply();
 
-
-
         loopBarView = (LoopBarView)findViewById(R.id.endlessView);
         loopBarView.setCategoriesAdapterFromMenu(R.menu.activity_main_drawer);
         loopBarView.addOnItemClickListener(new OnItemClickListener() {
@@ -103,21 +102,27 @@ public class MainActivity extends AppCompatActivity
                 switch (position){
                     case 0:
                         mViewPager.setCurrentItem(0);
+                        getSupportActionBar().setTitle("Вактхои Намоз");
                         break;
                     case 1:
                         mViewPager.setCurrentItem(1);
+                        getSupportActionBar().setTitle("Вактхои Намоз");
                         break;
                     case 2:
                         mViewPager.setCurrentItem(2);
+                        getSupportActionBar().setTitle("Куръони Карим");
                         break;
                     case 3:
                         mViewPager.setCurrentItem(3);
+                        getSupportActionBar().setTitle("Масчидхои Чомеъ");
                         break;
                     case 4:
                         mViewPager.setCurrentItem(4);
+                        getSupportActionBar().setTitle("Китобхона");
                         break;
                     case 5:
                         mViewPager.setCurrentItem(5);
+                        getSupportActionBar().setTitle("Гайра");
                         break;
 
 
@@ -178,18 +183,25 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_today) {
             mViewPager.setCurrentItem(0);
+
+            getSupportActionBar().setTitle("Вактхои Намоз");
         } else if (id == R.id.nav_prayers) {
             mViewPager.setCurrentItem(1);
+            getSupportActionBar().setTitle("Вактхои Намоз");
 
         } else if (id == R.id.nav_quran) {
             mViewPager.setCurrentItem(2);
+            getSupportActionBar().setTitle("Куръони Карим");
         } else if (id == R.id.nav_qibla) {
             mViewPager.setCurrentItem(3);
+            getSupportActionBar().setTitle("Масчидхои Чомеъ");
         } else if (id == R.id.nav_more) {
             mViewPager.setCurrentItem(5);
+            getSupportActionBar().setTitle("Гайра");
         }
         else if (id == R.id.nav_lib){
             mViewPager.setCurrentItem(4);
+            getSupportActionBar().setTitle("Китобхона");
 
         }
 

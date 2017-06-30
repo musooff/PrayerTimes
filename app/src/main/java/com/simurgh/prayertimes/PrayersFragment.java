@@ -104,13 +104,25 @@ public class PrayersFragment extends Fragment {
         shownDate = curDate;
 
         setDate(timestamp.getTime());
-        setPrayerTimes();
+        //setPrayerTimes();
 
 
         Log.e("cur",sharedCalFormat.format(curDate));
+        // set todays prayer times by iterating calendar;
+
         JSONObject calendar = null;
         try {
-             calendar = new JSONObject(sharedPreferences.getString("cal"+sharedCalFormat.format(curDate),"not62017"));
+            calendar = new JSONObject(sharedPreferences.getString(sharedCalFormat.format(curDate),"none"));
+            JSONArray data = calendar.getJSONArray("data");
+            SimpleDateFormat  apiDateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.US);
+            for (int j = 0; j < data.length(); j++){
+                //Log.e("showndate",apiDateFormat.format(shownDate));
+                //Log.e("dateReadable",data.getJSONObject(j).getJSONObject("date").getString("readable"));
+                if (apiDateFormat.format(curDate).equals(data.getJSONObject(j).getJSONObject("date").getString("readable"))){
+                    setPrayerTimesFromJson(data.getJSONObject(j));
+                    break;
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -131,7 +143,8 @@ public class PrayersFragment extends Fragment {
                             setDate(Long.valueOf(tomorrowTime)*1000);
                             //Log.e("date",data.getJSONObject(j+1).getJSONObject("date").getString("readable"));
                             if (shownDate.equals(curDate)){
-                                setPrayerTimes();
+                                //setPrayerTimes();
+                                setPrayerTimesFromJson(data.getJSONObject(j+1));
                             }
                             else {
                                 setPrayerTimesFromJson(data.getJSONObject(j+1));
@@ -158,7 +171,9 @@ public class PrayersFragment extends Fragment {
                             setDate(Long.valueOf(tomorrowTime)*1000);
                             //Log.e("date",data.getJSONObject(j-1).getJSONObject("date").getString("readable"));
                             if (shownDate.equals(curDate)){
-                                setPrayerTimes();
+                                //setPrayerTimes();
+                                setPrayerTimesFromJson(data.getJSONObject(j-1));
+
                             }
                             else {
                                 setPrayerTimesFromJson(data.getJSONObject(j-1));
@@ -259,15 +274,15 @@ public class PrayersFragment extends Fragment {
         try {
             JSONObject timings = data.getJSONObject("timings");
 
-        fajr = timings.getString("Fajr");
-        sunrise = timings.getString("Sunrise");
-        dhuhr = timings.getString("Dhuhr");
-        asr = timings.getString("Asr");
-        sunset = timings.getString("Sunset");
-        maghrib = timings.getString("Maghrib");
-        isha = timings.getString("Isha");
-        imsak = timings.getString("Imsak");
-        midnight = timings.getString("Midnight");
+            fajr = timings.getString("Fajr");
+            sunrise = timings.getString("Sunrise");
+            dhuhr = timings.getString("Dhuhr");
+            asr = timings.getString("Asr");
+            sunset = timings.getString("Sunset");
+            maghrib = timings.getString("Maghrib");
+            isha = timings.getString("Isha");
+            imsak = timings.getString("Imsak");
+            midnight = timings.getString("Midnight");
 
             fajr = fajr.substring(0,fajr.indexOf(" "));
             sunrise = sunrise.substring(0,sunrise.indexOf(" "));

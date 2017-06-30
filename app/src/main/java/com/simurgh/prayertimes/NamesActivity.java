@@ -4,8 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +34,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,6 +66,8 @@ public class NamesActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_names);
+
+        getSupportActionBar().setTitle("Номхои Худованд");
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_names);
 
@@ -139,6 +153,47 @@ public class NamesActivity extends AppCompatActivity {
             //TextView id = holder.id;
             ImageView tran = holder.tran;
             ImageView sound = holder.sound;
+
+            sound.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference storageRef = storage.getReference();
+                    StorageReference book = storageRef.child("names/name_"+category.getId()+".mp3");
+
+
+                    File storagePath = new File(Environment.getExternalStorageDirectory(), "NamesOfGod");
+                    // Create direcorty if not exists
+                    if(!storagePath.exists()) {
+                        storagePath.mkdirs();
+                    }
+                    final File localFile = new File(storagePath,"name_"+category.getId()+".mp3");
+
+
+                    book.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            //Toast.makeText(getContext(),localFile.getName(),Toast.LENGTH_SHORT).show();
+                            String path = localFile.getPath();
+                            MediaPlayer mediaPlayer = new  MediaPlayer();
+                            try {
+                                mediaPlayer.setDataSource(path);
+                                mediaPlayer.prepare();
+                                mediaPlayer.start();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+                }
+            });
 
             arabic.setText(category.getNameArabic());
             english.setText(category.getNameArabicTranscripted());

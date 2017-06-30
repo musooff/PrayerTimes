@@ -55,6 +55,7 @@
                     android:id="@+id/iv_sound_dia"
                     android:src="@drawable/ic_play_black"
                     android:layout_marginRight="10dp"
+                    android:visibility="gone"
                     android:clickable="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"/>
                 <ImageView

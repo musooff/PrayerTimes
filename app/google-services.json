@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "591791468005",
+    "firebase_url": "https://prayertimes-4a088.firebaseio.com",
+    "project_id": "prayertimes-4a088",
+    "storage_bucket": "prayertimes-4a088.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591791468005:android:8488a23f49dc7b1a",
+        "android_client_info": {
+          "package_name": "com.simurgh.prayertimes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591791468005-8eoigooiqhp1u9sd4mc86vgil9pvj8sc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCjmT6fJ7QfX3VJ1aiNQcmz32akZJkjF8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

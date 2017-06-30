@@ -387,88 +387,119 @@ public class TodayFragment extends Fragment {
 
         String dateReadable,dateTimestamp;
 
-        fajr = sharedPreferences.getString("fajr",null);
-        sunrise = sharedPreferences.getString("sunrise",null);
-        dhuhr = sharedPreferences.getString("dhuhr",null);
-        asr = sharedPreferences.getString("asr",null);
-        sunset = sharedPreferences.getString("sunset",null);
-        maghrib = sharedPreferences.getString("maghrib",null);
-        isha = sharedPreferences.getString("isha",null);
-        imsak = sharedPreferences.getString("imsak",null);
-        midnight = sharedPreferences.getString("midnight",null);
-
-        dateReadable = sharedPreferences.getString("dateReadable",null);
-        dateTimestamp = sharedPreferences.getString("dateTimestamp",null);
-
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        Date today = new Date();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.US);
-        int curTime = getMinutes(dateFormat.format(today));
+        Date curDate = new Date(timestamp.getTime());
+        SimpleDateFormat sharedCalFormat = new SimpleDateFormat("MMYYYY", Locale.US);
+        JSONObject calendar = null;
+        try {
+            calendar = new JSONObject(sharedPreferences.getString(sharedCalFormat.format(curDate),"none"));
+            JSONArray data = calendar.getJSONArray("data");
+            SimpleDateFormat  apiDateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.US);
+            for (int j = 0; j < data.length(); j++){
+                if (apiDateFormat.format(curDate).equals(data.getJSONObject(j).getJSONObject("date").getString("readable"))){
+                    //setPrayerTimesFromJson(data.getJSONObject(j));
+                    Log.e("foundDate","j="+j+" month = "+data.getJSONObject(j).getJSONObject("date").getString("readable"));
+                    JSONObject timings = data.getJSONObject(j).getJSONObject("timings");
 
-        int[] times = new int[]{getMinutes(fajr),getMinutes(sunrise),getMinutes(dhuhr),getMinutes(asr),
-                getMinutes(sunset),getMinutes(maghrib),getMinutes(isha),getMinutes(imsak),getMinutes(midnight)};
+                    Log.e("timing",timings.toString());
+                    fajr = timings.getString("Fajr");
+                    sunrise = timings.getString("Sunrise");
+                    dhuhr = timings.getString("Dhuhr");
+                    asr = timings.getString("Asr");
+                    sunset = timings.getString("Sunset");
+                    maghrib = timings.getString("Maghrib");
+                    isha = timings.getString("Isha");
+                    imsak = timings.getString("Imsak");
+                    midnight = timings.getString("Midnight");
 
-        //set default notifications settings from shared preference;
-        Integer[] images = new Integer[]{R.drawable.ic_notification_white,
-                R.drawable.ic_adhan_notification_white,
-                R.drawable.ic_silent_notification_white,
-                R.drawable.ic_block_notification_white};
+                    fajr = fajr.substring(0,fajr.indexOf(" "));
+                    sunrise = sunrise.substring(0,sunrise.indexOf(" "));
+                    dhuhr = dhuhr.substring(0,dhuhr.indexOf(" "));
+                    asr = asr.substring(0,asr.indexOf(" "));
+                    sunset = sunset.substring(0,sunset.indexOf(" "));
+                    maghrib = maghrib.substring(0,maghrib.indexOf(" "));
+                    isha = isha.substring(0,isha.indexOf(" "));
+                    imsak = imsak.substring(0,imsak.indexOf(" "));
+                    midnight = midnight.substring(0,midnight.indexOf(" "));
 
-        if (curTime < times[1]){// before fajr and during
-            //setFajr(curTime,times[0],fajr);
-            tv_prayer_time.setText(fajr);
-            tv_prayer_name.setText("Бомдод");
-            iv_notification.setImageResource(images[sharedPreferences.getInt("fajrNot",0)]);
-            iv_notification.setTag("fajrNot");
-            // start count timer
+                    Date today = new Date();
+
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.US);
+                    int curTime = getMinutes(dateFormat.format(today));
+
+                    int[] times = new int[]{getMinutes(fajr),getMinutes(sunrise),getMinutes(dhuhr),getMinutes(asr),
+                            getMinutes(sunset),getMinutes(maghrib),getMinutes(isha),getMinutes(imsak),getMinutes(midnight)};
+
+                    //set default notifications settings from shared preference;
+                    Integer[] images = new Integer[]{R.drawable.ic_notification_white,
+                            R.drawable.ic_adhan_notification_white,
+                            R.drawable.ic_silent_notification_white,
+                            R.drawable.ic_block_notification_white};
+
+                    if (curTime < times[1]){// before fajr and during
+                        //setFajr(curTime,times[0],fajr);
+                        tv_prayer_time.setText(fajr);
+                        tv_prayer_name.setText("Бомдод");
+                        iv_notification.setImageResource(images[sharedPreferences.getInt("fajrNot",0)]);
+                        iv_notification.setTag("fajrNot");
+                        // start count timer
+                    }
+                    else if ((times[2] > curTime) && (curTime >= times[1])){// during sunrise
+                        //setFajr(curTime,times[0],fajr);
+                        tv_prayer_time.setText(sunrise);
+                        tv_prayer_name.setText("Офтоб баромад");
+                        iv_notification.setImageResource(images[sharedPreferences.getInt("sunriseNot",3)]);
+                        iv_notification.setTag("sunriseNot");
+                        // start count timer
+                    }
+                    else if ((times[3] > curTime) && (curTime >= times[2])){// during dhuhr
+                        //setFajr(curTime,times[0],fajr);
+                        tv_prayer_time.setText(dhuhr);
+                        tv_prayer_name.setText("Пешин");
+                        iv_notification.setImageResource(images[sharedPreferences.getInt("dhuhrNot",0)]);
+                        iv_notification.setTag("dhuhrNot");
+                        // start count timer
+                    }
+                    else if ((times[4] > curTime) && (curTime >= times[3])){// during asr
+                        //setFajr(curTime,times[0],fajr);
+                        tv_prayer_time.setText(asr);
+                        tv_prayer_name.setText("Аср");
+                        iv_notification.setImageResource(images[sharedPreferences.getInt("asrNot",0)]);
+                        iv_notification.setTag("asrNot");
+                        // start count timer
+                    }
+                    else if ((times[6] > curTime) && (curTime >= times[5])){// during maghrib
+                        //setFajr(curTime,times[0],fajr);
+                        tv_prayer_time.setText(maghrib);
+                        tv_prayer_name.setText("Шом");
+                        iv_notification.setImageResource(images[sharedPreferences.getInt("maghribNot",0)]);
+                        iv_notification.setTag("maghribNot");
+                        // start count timer
+                    }
+                    else if ( (curTime > times[6])){// during isha
+                        //setFajr(curTime,times[0],fajr);
+                        tv_prayer_time.setText(isha);
+                        tv_prayer_name.setText("Хуфтан");
+                        iv_notification.setImageResource(images[sharedPreferences.getInt("ishaNot",0)]);
+                        iv_notification.setTag("ishaNot");
+                        // start count timer
+                    }
+                    else {
+                        tv_prayer_name.setText("Бомдоди пагох");
+                        iv_notification.setImageResource(images[sharedPreferences.getInt("fajrNot",0)]);
+                        iv_notification.setTag("fajrNot");
+                        //
+                    }
+
+                    break;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        else if ((times[2] > curTime) && (curTime >= times[1])){// during sunrise
-            //setFajr(curTime,times[0],fajr);
-            tv_prayer_time.setText(sunrise);
-            tv_prayer_name.setText("Офтоб баромад");
-            iv_notification.setImageResource(images[sharedPreferences.getInt("sunriseNot",3)]);
-            iv_notification.setTag("sunriseNot");
-            // start count timer
-        }
-        else if ((times[3] > curTime) && (curTime >= times[2])){// during dhuhr
-            //setFajr(curTime,times[0],fajr);
-            tv_prayer_time.setText(dhuhr);
-            tv_prayer_name.setText("Пешин");
-            iv_notification.setImageResource(images[sharedPreferences.getInt("dhuhrNot",0)]);
-            iv_notification.setTag("dhuhrNot");
-            // start count timer
-        }
-        else if ((times[4] > curTime) && (curTime >= times[3])){// during asr
-            //setFajr(curTime,times[0],fajr);
-            tv_prayer_time.setText(asr);
-            tv_prayer_name.setText("Аср");
-            iv_notification.setImageResource(images[sharedPreferences.getInt("asrNot",0)]);
-            iv_notification.setTag("asrNot");
-            // start count timer
-        }
-        else if ((times[6] > curTime) && (curTime >= times[5])){// during maghrib
-            //setFajr(curTime,times[0],fajr);
-            tv_prayer_time.setText(maghrib);
-            tv_prayer_name.setText("Шом");
-            iv_notification.setImageResource(images[sharedPreferences.getInt("maghribNot",0)]);
-            iv_notification.setTag("maghribNot");
-            // start count timer
-        }
-        else if ( (curTime > times[6])){// during isha
-            //setFajr(curTime,times[0],fajr);
-            tv_prayer_time.setText(isha);
-            tv_prayer_name.setText("Хуфтан");
-            iv_notification.setImageResource(images[sharedPreferences.getInt("ishaNot",0)]);
-            iv_notification.setTag("ishaNot");
-            // start count timer
-        }
-        else {
-            tv_prayer_name.setText("Бомдоди пагох");
-            iv_notification.setImageResource(images[sharedPreferences.getInt("fajrNot",0)]);
-            iv_notification.setTag("fajrNot");
-            //
-        }
+
+
 
 
     }
