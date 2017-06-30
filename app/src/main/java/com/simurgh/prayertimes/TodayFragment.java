@@ -163,26 +163,31 @@ public class TodayFragment extends Fragment {
 
     private void setOneAyah() {
 
-        if (sharedPreferences.getBoolean("todayVerseAvailable",false)){ // if there is it returns true
+        SimpleDateFormat dayFormat = new SimpleDateFormat("dd",Locale.US);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
+
+        Date today = new Date();
+        try {
+
+            JSONObject sharedJson = new JSONObject(sharedPreferences.getString("ayahs"+dateFormat.format(today),"none"));
 
             JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(sharedPreferences.getString("todayVerse","none"));
-                final JSONArray data = jsonObject.getJSONArray("data");
-                JSONObject tajik = data.getJSONObject(1);
-                final String text = tajik.getString("text");
-                tv_verse.setText(text);
 
-                JSONObject surah = tajik.getJSONObject("surah");
-                final String surahName = surah.getString("englishName");
-                final int surahNumber = surah.getInt("number");
+            Log.e("dayVerse",dayFormat.format(today));
 
-                final int verseNumber = tajik.getInt("numberInSurah");
-
-                tv_verse_name.setText(surahName+"("+surahNumber+":"+verseNumber+")");
+            jsonObject = sharedJson.getJSONArray("data").getJSONObject(Integer.parseInt(dayFormat.format(today))-1);
+            tv_verse_name.setText(
+                    jsonObject.getString("surahNameTajik")
+                            + "("
+                            +jsonObject.getInt("surahNumber")
+                            +":"
+                            +jsonObject.getInt("verseNumber")
+                            +")");
+            tv_verse.setText(jsonObject.getString("verseTajik"));
 
 
-                tv_read_verse.setOnClickListener(new View.OnClickListener() {
+            final JSONObject finalJsonObject = jsonObject;
+            tv_read_verse.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         final Dialog dialog = new Dialog(getActivity());
@@ -196,20 +201,13 @@ public class TodayFragment extends Fragment {
 
                         TextView tvID = (TextView)dialog.findViewById(R.id.tv_id);
 
-
                         try {
-                            JSONObject arabic = data.getJSONObject(0);
-                            diaArabic.setText(arabic.getString("text"));
-                            //diaTajik.setText();
-                            diaTranslate.setText(text);
-
-                            tajName.setText(surahName);
-                            araName.setText(arabic.getJSONObject("surah").getString("name"));
-
-                            //tvID.setText(surahNumber+":"+verseNumber);
-
-
+                            diaArabic.setText(finalJsonObject.getString("verseArabic"));
+                            diaTranslate.setText(finalJsonObject.getString("verseTajik"));
+                            tajName.setText(finalJsonObject.getString("surahNameTajik"));
+                            araName.setText(finalJsonObject.getString("surahNameArabic"));
                             dialog.show();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -219,19 +217,6 @@ public class TodayFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
-
-
-
-        }
-        else {
-            Random randomAyah = new Random();
-            int ranAyah = randomAyah.nextInt(6236)+1;
-            String str_url = "http://api.alquran.cloud/ayah/"+ranAyah+"/editions/quran-simple,tg.ayati";
-            new DownloadAyah().execute(str_url);
-
-        }
 
     }
 

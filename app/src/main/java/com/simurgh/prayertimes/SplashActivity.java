@@ -18,11 +18,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,9 +45,11 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -51,16 +59,32 @@ public class SplashActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient mFusedLocationClient;
 
+    TextView tv_download;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
 
         /*Get Shared Preference*/
         sharedPreferences = getSharedPreferences("PrayerData", 0);
         editor = sharedPreferences.edit();
 
         editor.apply();
+
+
+        tv_download = (TextView)findViewById(R.id.tv_download);
+
+        // for me only, updating firebase
+        //downloadAndUploadVerse();
+
+
+
+        //download verses
+        //downloadVerse();
+
+
 
 
         /*Get todays date and download times for the month*/
@@ -71,8 +95,11 @@ public class SplashActivity extends AppCompatActivity {
         Log.e("date",strDate);
 
 
+
+
         if (sharedPreferences.getBoolean("firstRun",true)) {
             Log.v("loc", "asking location");
+
 
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -120,7 +147,9 @@ public class SplashActivity extends AppCompatActivity {
                                 Log.e("city",cityName);
 
                                 //new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
+                                tv_download.setText("Боргирии вактхо.\nЛутфан мунтазир шавед. Ин факат 1 бор мебошад.");
                                 new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
+
                             }
                         }
                     });
@@ -128,8 +157,9 @@ public class SplashActivity extends AppCompatActivity {
 
 
             setDefaultPreferences();
-
             setBookDownloads();
+
+
 
             editor.putBoolean("firstRun", false);
             editor.apply();
@@ -138,6 +168,7 @@ public class SplashActivity extends AppCompatActivity {
             //download this months prayer times;
             new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
         }
+
 
 
         else {
@@ -159,6 +190,86 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         */
+    }
+
+
+
+    private void downloadVerse() {
+
+        tv_download.setText("Боргирии Оятхо.\nЛутфан мунтазир шавед. Ин факат 1 бор мебошад.");
+
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
+        final Date today = new Date();
+        DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mVerse = mRootRef.child("VerseOfMonth");
+        DatabaseReference mMonth = mVerse.child(dateFormat.format(today));
+        mMonth.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                JSONObject ayahs = new JSONObject();
+                JSONArray data = new JSONArray();
+                try {
+                    ayahs.put("data",data);
+                    for (DataSnapshot day: dataSnapshot.getChildren()){
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("surahNameArabic",day.child("surahNameArabic").getValue(String.class));
+                        jsonObject.put("surahNameTajik",day.child("surahNameTajik").getValue(String.class));
+                        jsonObject.put("surahNameTajikTranscribed",day.child("surahNameTajikTranscribed").getValue(String.class));
+                        jsonObject.put("surahNumber",day.child("surahNumber").getValue(Integer.class));
+                        jsonObject.put("verseArabic",day.child("verseArabic").getValue(String.class));
+                        jsonObject.put("verseNumber",day.child("verseNumber").getValue(Integer.class));
+                        jsonObject.put("versePlace",day.child("versePlace").getValue(String.class));
+                        jsonObject.put("verseTajik",day.child("verseTajik").getValue(String.class));
+                        jsonObject.put("verseTajikTranscribed",day.child("verseTajikTranscribed").getValue(String.class));
+                        Log.e("day",jsonObject.toString());
+                        data.put(jsonObject);
+                    }
+
+                    editor.putString("ayahs"+dateFormat.format(today),ayahs.toString());
+                    editor.apply();
+
+
+                    // start main activity
+                    Intent main = new Intent(SplashActivity.this,MainActivity.class);
+                    startActivity(main);
+                    finish();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void downloadAndUploadVerse() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
+        Date today = new Date();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        int numDates =cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        Log.e("numDates",numDates+"");
+        Random randomAyah = new Random();
+
+        for (int i = 0; i< numDates; i++){
+
+            int ranAyah = randomAyah.nextInt(6236)+1;
+            String str_url = "http://api.alquran.cloud/ayah/"+ranAyah+"/editions/quran-simple,tg.ayati";
+            if (i == numDates-1){
+                new DownloadAyah().execute(new String[]{str_url, String.valueOf(i+1), dateFormat.format(today),"1"});// last download
+            }
+            else {
+                new DownloadAyah().execute(new String[]{str_url, String.valueOf(i+1), dateFormat.format(today),"0"});
+
+            }
+        }
     }
 
     private void setBookDownloads() {
@@ -323,9 +434,11 @@ public class SplashActivity extends AppCompatActivity {
             editor.putBoolean("data",true);
             editor.apply();
 
-            Intent main = new Intent(SplashActivity.this,MainActivity.class);
-            startActivity(main);
-            finish();
+            //download verses
+            downloadVerse();
+
+
+
         }
     }
 
@@ -400,12 +513,17 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    public class DownloadAyah extends AsyncTask<String,Void,String> {
+    public class DownloadAyah extends AsyncTask<String[],Void,String> {
+        String day;
+        String month;
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String[]... params) {
+
+            day = params[0][1];
+            month = params[0][2];
 
             try {
-                URL url = new URL(params[0]);
+                URL url = new URL(params[0][0]);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
                 InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
                 return readStream(in);
@@ -426,19 +544,42 @@ public class SplashActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject= new JSONObject(s);
                 JSONArray data = jsonObject.getJSONArray("data");
-                JSONObject tajik = data.getJSONObject(1);
-                String text = tajik.getString("text");
 
-                JSONObject surah = tajik.getJSONObject("surah");
-                String surahName = surah.getString("englishName");
-                int surahNumber = surah.getInt("number");
+                JSONObject tajik = data.getJSONObject(1);
+                JSONObject arabic = data.getJSONObject(0);
+
+                String textTajik = tajik.getString("text");
+                String textArabic = arabic.getString("text");
+
+                JSONObject surahTajik = tajik.getJSONObject("surah");
+                JSONObject surahArabic = arabic.getJSONObject("surah");
+
+                String surahNameTajik = surahTajik.getString("englishName");
+                String surahNameArabic = surahTajik.getString("name");
+                String revelationType = surahTajik.getString("revelationType");
+
+                int surahNumber = surahTajik.getInt("number");
 
                 int verseNumber = tajik.getInt("numberInSurah");
 
 
-                editor.putBoolean("todayVerseAvailable",true);
-                editor.putString("todayVerse",jsonObject.toString());
-                editor.apply();
+                DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+
+
+                DatabaseReference mVerse = mRootRef.child("VerseOfMonth");
+                DatabaseReference mMonth = mVerse.child(month);
+                DatabaseReference mDay = mMonth.child(day);
+
+                mDay.child("verseNumber").setValue(verseNumber);
+                mDay.child("surahNumber").setValue(surahNumber);
+                mDay.child("verseArabic").setValue(textArabic);
+                mDay.child("verseTajik").setValue(textTajik);
+                mDay.child("verseTajikTranscribed").setValue("Not available");
+                mDay.child("surahNameArabic").setValue(surahNameArabic);
+                mDay.child("surahNameTajik").setValue(surahNameTajik);
+                mDay.child("surahNameTajikTranscribed").setValue("Not available");
+                mDay.child("versePlace").setValue(revelationType);
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
