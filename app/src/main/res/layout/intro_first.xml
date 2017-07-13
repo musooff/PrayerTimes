@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_green_dark">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_intro_man"
+        android:id="@+id/iv_main"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/iv_main"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_intro_children"
+        android:id="@+id/iv_first"/>
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_intro_cloud"
+        android:layout_marginRight="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="50dp"
+        android:layout_above="@+id/iv_main"
+        android:id="@+id/iv_second"
+        />
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_intro_star"
+        android:id="@+id/iv_fourth"
+        android:layout_alignBottom="@+id/iv_second"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="53dp"
+        android:layout_marginStart="53dp" />
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_intro_star"
+        android:id="@+id/iv_fifth"
+        android:layout_below="@+id/iv_fourth"
+        android:layout_toRightOf="@+id/iv_fourth"
+        android:layout_toEndOf="@+id/iv_fourth"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="23dp" />
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_intro_star"
+        android:id="@+id/iv_sixth"
+        android:layout_above="@+id/iv_second"
+        android:layout_toRightOf="@+id/iv_first"
+        android:layout_toEndOf="@+id/iv_first"
+        android:layout_marginLeft="57dp"
+        android:layout_marginStart="57dp" />
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_intro_star"
+        android:id="@+id/iv_seventh"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/iv_fifth"
+        android:layout_toEndOf="@+id/iv_fifth"
+        android:layout_marginTop="11dp" />
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_intro_star"
+        android:id="@+id/iv_eigth"
+        android:layout_below="@+id/iv_seventh"
+        android:layout_alignLeft="@+id/iv_fourth"
+        android:layout_alignStart="@+id/iv_fourth" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:text="Вахтхои Намоз"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="70dp"
+        android:gravity="center"/>
+    
+
+</RelativeLayout>

@@ -9,4 +9,14 @@
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="greyLight">#cccccc</color>
+
+    <color name="introElementColor">#0080B3</color>
+    <color name="introSelectedElementColor">#FF4081</color>
+
+    <color name="intro1">#00c9fc</color>
+    <color name="intro2">#00c9c8</color>
+    <color name="intro3">#ffc519</color>
+    <color name="intro4">#fee3b1</color>
+    <color name="intro5">#ff1356</color>
+
 </resources>

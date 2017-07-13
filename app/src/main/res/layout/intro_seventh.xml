@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/greenLight">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:layout_centerInParent="true"
+        android:text="Танхо барои Шумо"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="50sp"
+        android:id="@+id/iv_main"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:text="Ва Гайра"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="70dp"
+        android:gravity="center"/>
+
+
+</RelativeLayout>

@@ -38,5 +38,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.github.barteksc:android-pdf-viewer:2.7.0-beta'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+    compile 'com.cleveroad:slidingtutorial:1.0.8'
 }
 apply plugin: 'com.google.gms.google-services'

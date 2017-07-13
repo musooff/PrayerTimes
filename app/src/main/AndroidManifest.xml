@@ -19,13 +19,9 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".SplashActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        <activity android:name=".MosqueActivity" />
+        <activity android:name=".MosqueActivity" ></activity>
         <activity android:name=".BookActivity"></activity>
 
         <receiver android:name=".NotificationService"/>
@@ -35,11 +31,18 @@
         <activity android:name=".DisclaimerActivity"/>
         <activity android:name=".HelpActivity"/>
         <activity android:name=".SettingsActivity"/>
+        <activity android:name=".TestActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBw86vZaWoH6oxuF7Y2H5L1-1Wrz7iEuFo"/>
+
 
     </application>
 

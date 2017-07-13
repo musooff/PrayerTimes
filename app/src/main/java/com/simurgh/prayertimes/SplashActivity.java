@@ -1,18 +1,24 @@
 package com.simurgh.prayertimes;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +27,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cleveroad.slidingtutorial.Direction;
+import com.cleveroad.slidingtutorial.IndicatorOptions;
+import com.cleveroad.slidingtutorial.PageOptions;
+import com.cleveroad.slidingtutorial.Renderer;
+import com.cleveroad.slidingtutorial.TransformItem;
+import com.cleveroad.slidingtutorial.TutorialFragment;
+import com.cleveroad.slidingtutorial.TutorialOptions;
+import com.cleveroad.slidingtutorial.TutorialPageOptionsProvider;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -51,7 +65,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity {
 
 
     SharedPreferences sharedPreferences;
@@ -61,24 +75,156 @@ public class SplashActivity extends AppCompatActivity {
 
     TextView tv_download;
     private JSONObject alarmFromJson;
+    TextView tvSkip;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        tvSkip = (TextView)findViewById(R.id.tvSkip);
 
         /*Get Shared Preference*/
         sharedPreferences = getSharedPreferences("PrayerData", 0);
         editor = sharedPreferences.edit();
-
         editor.apply();
+
+
+
+        // Run First Intro Slides
+        final IndicatorOptions indicatorOptions = IndicatorOptions.newBuilder(getApplicationContext())
+                .setElementColorRes(R.color.white)
+                .setSelectedElementColorRes(R.color.grey)
+                .setRenderer(new Renderer() {
+                    @Override
+                    public void draw(@NonNull Canvas canvas, @NonNull RectF elementBounds, @NonNull Paint paint, boolean isActive) {
+                        float radius = Math.min(elementBounds.width(), elementBounds.height());
+                        radius /= 2f;
+                        canvas.drawCircle(elementBounds.centerX(), elementBounds.centerY(), radius, paint);
+                    }
+                })
+                .build();
+
+        final TutorialPageOptionsProvider tutorialPageOptionsProvider = new TutorialPageOptionsProvider() {
+            @NonNull
+            @Override
+            public PageOptions provide(int position) {
+                @LayoutRes int pageLayoutResId;
+                TransformItem[] tutorialItems;
+                switch (position) {
+                    case 0: {
+                        pageLayoutResId = R.layout.intro_first;
+                        tutorialItems = new TransformItem[]{
+                                TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.1f),
+                                TransformItem.create(R.id.iv_first, Direction.RIGHT_TO_LEFT, 0.2f),
+                                TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.3f),
+                                TransformItem.create(R.id.iv_fourth, Direction.RIGHT_TO_LEFT, 0.5f),
+                                TransformItem.create(R.id.iv_fifth, Direction.RIGHT_TO_LEFT, 0.6f),
+                                TransformItem.create(R.id.iv_sixth, Direction.RIGHT_TO_LEFT, 0.7f),
+                                TransformItem.create(R.id.iv_seventh, Direction.RIGHT_TO_LEFT, 0.8f),
+                                TransformItem.create(R.id.iv_eigth, Direction.RIGHT_TO_LEFT, 0.9f)
+                        };
+                        break;
+                    }
+                    case 1: {
+                        pageLayoutResId = R.layout.intro_second;
+                        tutorialItems = new TransformItem[]{
+                                TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f),
+                                TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
+                                TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
+                        };
+                        break;
+                    }
+                    case 2: {
+                        pageLayoutResId = R.layout.intro_third;
+                        tutorialItems = new TransformItem[]{
+                                TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f),
+                                TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
+                                TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
+                        };
+                        break;
+                    }
+                    case 3: {
+                        pageLayoutResId = R.layout.intro_fourth;
+                        tutorialItems = new TransformItem[]{
+                                TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f),
+                                TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
+                                TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
+                        };
+                        break;
+                    }
+                    case 4: {
+                        pageLayoutResId = R.layout.intro_fifth;
+                        tutorialItems = new TransformItem[]{
+                                TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f),
+                                TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
+                                TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
+                        };
+                        break;
+                    }
+                    case 5: {
+                        pageLayoutResId = R.layout.intro_sixth;
+                        tutorialItems = new TransformItem[]{
+                                TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f),
+                                TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
+                                TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
+                        };
+                        break;
+                    }
+                    case 6: {
+                        pageLayoutResId = R.layout.intro_seventh;
+                        tutorialItems = new TransformItem[]{
+                                TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f)
+                        };
+                        break;
+                    }
+                    case 7: {
+                        pageLayoutResId = R.layout.intro_ninth;
+                        tutorialItems = new TransformItem[]{
+                                TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f)
+                        };
+                        tvSkip.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                    default: {
+                        throw new IllegalArgumentException("Unknown position: " + position);
+                    }
+                }
+
+                return PageOptions.create(pageLayoutResId, position, tutorialItems);
+            }
+        };
+
+        final TutorialOptions tutorialOptions = TutorialFragment.newTutorialOptionsBuilder(getApplicationContext())
+                .setUseAutoRemoveTutorialFragment(false)
+                .setUseInfiniteScroll(false)
+                .setTutorialPageProvider(tutorialPageOptionsProvider)
+                .setIndicatorOptions(indicatorOptions)
+                .setPagesCount(8)
+                .build();
+
+        final TutorialFragment tutorialFragment = TutorialFragment.newInstance(tutorialOptions);
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, tutorialFragment)
+                .commit();
+
+        tvSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent main = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(main);
+                finish();
+            }
+        });
 
 
         tv_download = (TextView)findViewById(R.id.tv_download);
 
 
-        /*Get todays date and download times for the month*/
+        /*
+        Get todays date and download times for the month*/
         final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Date today = new Date(timestamp.getTime());
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
@@ -718,5 +864,23 @@ public class SplashActivity extends AppCompatActivity {
 
         }
     }
+
+    private final class OnSkipClickListener implements View.OnClickListener {
+
+        @NonNull
+        private final Context mContext;
+
+        OnSkipClickListener(@NonNull Context context) {
+            mContext = SplashActivity.this;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent splash = new Intent(mContext,MainActivity.class);
+            mContext.startActivity(splash);
+            ((Activity)mContext).finish();
+        }
+    }
+
 
 }
