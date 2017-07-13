@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -17,24 +18,33 @@ import android.util.Log;
 
 public class NotificationService extends BroadcastReceiver{
 
-    public static String NOTIFICATION_SOUND = "notificationSound";
+    public static String NOTIFICATION_ID = "notificationID";
     public static String NOTIFICATION_NAME = "notificationName";
     public static String NOTIFICATION_BODY = "notificationBody";
     Uri path;
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-
-
+        sharedPreferences = context.getSharedPreferences("PrayerData",0);
         showNotification(context, intent);
 
     }
 
     private void showNotification(Context context, Intent intent) {
         Log.i("notification", "visible");
-        int id = intent.getIntExtra(NOTIFICATION_SOUND, 0);
+        int id = intent.getIntExtra(NOTIFICATION_ID, 0);
+        int[] notSettings = new int[]{sharedPreferences.getInt("fajrNot",0),
+                sharedPreferences.getInt("sunriseNot",3),
+                sharedPreferences.getInt("dhuhrNot",0),
+                sharedPreferences.getInt("asrNot",0),
+                sharedPreferences.getInt("maghribNot",0),
+                sharedPreferences.getInt("ishaNot",0)};
+
+
 
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
@@ -50,7 +60,8 @@ public class NotificationService extends BroadcastReceiver{
         mBuilder.setAutoCancel(true);
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        switch (id){
+
+        switch (notSettings[id]){
             case 0:// default sound
                 mBuilder.setDefaults(Notification.DEFAULT_SOUND);
                 mNotificationManager.notify(1, mBuilder.build());

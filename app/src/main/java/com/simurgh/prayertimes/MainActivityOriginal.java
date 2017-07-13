@@ -170,9 +170,12 @@ public class MainActivityOriginal extends AppCompatActivity
             Toast.makeText(getApplicationContext(),"Quran",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_qibla) {
 
-        } else if (id == R.id.nav_more) {
+        }
+        /*
+        else if (id == R.id.nav_more) {
 
         }
+        */
         else if (id == R.id.nav_lib){
 
         }

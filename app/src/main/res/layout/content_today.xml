@@ -40,19 +40,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_above="@+id/tv_next_prayer_name"
                         android:id="@+id/tv_next_prayer_time"
                         android:text="3:23"
-                        android:textSize="80sp"
+                        android:textSize="30sp"
                         android:textColor="@color/white"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_above="@+id/tv_next_prayer_time"
                         android:id="@+id/tv_next_prayer_name"
+                        android:layout_centerVertical="true"
                         android:text="Бомдод"
-                        android:textSize="18sp"
+                        android:textSize="80sp"
                         android:textColor="@color/white"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -62,15 +62,17 @@
                         android:id="@+id/tv_next_prayer_remaining"
                         android:text="(-0:46:34)"
                         android:textSize="18sp"
+                        android:visibility="invisible"
                         android:textColor="@color/white"/>
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_centerVertical="true"
                         android:id="@+id/iv_notification"
+                        android:layout_alignBottom="@+id/tv_next_prayer_time"
                         android:layout_toRightOf="@+id/tv_next_prayer_time"
                         android:src="@drawable/ic_notification_white"
                         android:layout_marginLeft="10dp"
+                        android:visibility="invisible"
                         android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
                     <TextView
@@ -84,9 +86,11 @@
                         android:layout_marginBottom="5dp"
                         android:layout_marginLeft="16dp"
                         android:textSize="12sp"
-                        android:alpha="0.9"
                         android:drawableLeft="@drawable/ic_location_white"
-                        android:drawablePadding="5dp"/>
+                        android:drawablePadding="5dp"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"/>
+
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 
@@ -206,6 +210,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_read_hadis"
+                        android:visibility="invisible"
                         android:text="Муфассалтар"
                         android:gravity="right"
                         android:textColor="@color/colorPrimary"
@@ -292,6 +297,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_read_dua"
                         android:text="Муфассалтар"
+                        android:visibility="invisible"
                         android:gravity="right"
                         android:textColor="@color/colorPrimary"
                         android:clickable="true"
@@ -425,7 +431,7 @@
 
                         android:textColor="@color/black"
                         android:textSize="15sp"
-                        android:text="Convey from me even if it is one verse - Мухаммад с.а.в" />
+                        android:text="Аз ман, агарчанде ки як оят бошад хам, ба мардум бирасонед - Мухаммад с.а.в" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

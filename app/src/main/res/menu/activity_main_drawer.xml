@@ -22,10 +22,14 @@
             android:id="@+id/nav_lib"
             android:icon="@drawable/ic_library_white"
             android:title="Китобхонa" />
-        <item
-            android:id="@+id/nav_more"
-            android:icon="@drawable/ic_more_white"
-            android:title="Гайра" />
+        <!--
+
+    <item
+        android:id="@+id/nav_more"
+        android:icon="@drawable/ic_more_white"
+        android:title="Гайра" />
+              -->
+
     </group>
 
 

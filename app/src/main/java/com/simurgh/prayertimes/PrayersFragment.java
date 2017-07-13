@@ -1,6 +1,9 @@
 package com.simurgh.prayertimes;
 
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,11 +25,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static android.content.Context.ALARM_SERVICE;
 
 /**
  * Created by moshe on 26/06/2017.
@@ -548,4 +554,6 @@ public class PrayersFragment extends Fragment {
         });
 
     }
+
+
 }

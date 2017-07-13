@@ -43,6 +43,9 @@ public class QuranFragment extends Fragment {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
+    JSONObject surahs;
+    JSONArray dataSurah;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,6 +63,19 @@ public class QuranFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("PrayerData",0);
         editor = sharedPreferences.edit();
         editor.apply();
+
+        try {
+            InputStream inputStream = getActivity().getResources().getAssets().open("surahs.json");
+            JSONObject jsonObject = new JSONObject(readStream(inputStream));
+            dataSurah = jsonObject.getJSONArray("data");
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         DataSurahAdapter mAdapter = new DataSurahAdapter(getContext(),dataSuraNames);
         mRecyclerView.setAdapter(mAdapter);
         if (sharedPreferences.getBoolean("surahsAvailable",false)){
@@ -122,8 +138,13 @@ public class QuranFragment extends Fragment {
                 for (int i = 0; i <data.length(); i++){
                     int number = data.getJSONObject(i).getInt("number");
                     String name = data.getJSONObject(i).getString("name");
-                    String englishName = data.getJSONObject(i).getString("englishName");
-                    String englishNameTranslation = data.getJSONObject(i).getString("englishNameTranslation");
+                    //String englishName = data.getJSONObject(i).getString("englishName");
+                    //String englishNameTranslation = data.getJSONObject(i).getString("englishNameTranslation");
+
+
+                    String englishName = dataSurah.getJSONObject(i).getString("name");
+                    String englishNameTranslation = dataSurah.getJSONObject(i).getString("trans");
+
                     int numberOfAyahs = data.getJSONObject(i).getInt("numberOfAyahs");
                     String revelationType = data.getJSONObject(i).getString("revelationType");
                     dataSuraNames.add(new DataSuraNames(name,englishName,englishNameTranslation,number));

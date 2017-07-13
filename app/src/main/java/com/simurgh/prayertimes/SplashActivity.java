@@ -60,6 +60,7 @@ public class SplashActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
 
     TextView tv_download;
+    private JSONObject alarmFromJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,16 +77,6 @@ public class SplashActivity extends AppCompatActivity {
 
         tv_download = (TextView)findViewById(R.id.tv_download);
 
-        // for me only, updating firebase
-        //downloadAndUploadVerse();
-
-
-
-        //download verses
-        //downloadVerse();
-
-
-
 
         /*Get todays date and download times for the month*/
         final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -93,6 +84,8 @@ public class SplashActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
         final String strDate = dateFormat.format(today);
         Log.e("date",strDate);
+
+
 
 
 
@@ -119,38 +112,47 @@ public class SplashActivity extends AppCompatActivity {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 String longitude = "Longitude: " + location.getLongitude();
-                                Log.v("long", longitude);
+                                Log.e("long", longitude);
                                 String latitude = "Latitude: " + location.getLatitude();
-                                Log.v("lat", latitude);
+                                Log.e("lat", latitude);
 
-                            /*------- To get city name from coordinates -------- */
-                                String cityName = null;
-                                Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+                                Geocoder geocoder;
                                 List<Address> addresses;
+                                geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
                                 try {
-                                    addresses = gcd.getFromLocation(location.getLatitude(),
-                                            location.getLongitude(), 1);
-                                    if (addresses.size() > 0) {
-                                        System.out.println(addresses.get(0).getLocality());
-                                        cityName = addresses.get(0).getLocality();
-                                    }
-                                }
-                                catch (IOException e) {
+                                    addresses = geocoder.getFromLocation(location.getLatitude(),
+                                            location.getLongitude(),
+                                            1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+                                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                                    String city = addresses.get(0).getLocality();
+                                    String state = addresses.get(0).getAdminArea();
+                                    String country = addresses.get(0).getCountryName();
+                                    String postalCode = addresses.get(0).getPostalCode();
+                                    String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+
+                                    Log.e("address",address);
+
+                                    editor.putFloat("locLat", (float) location.getLatitude());
+                                    editor.putFloat("locLong", (float) location.getLongitude());
+                                    editor.putString("address",address);
+                                    editor.apply();
+
+                                    //Log.e("city",cityName);
+
+                                    //new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
+                                    tv_download.setText("Боргирии вактхо.\nЛутфан мунтазир шавед. Ин факат 1 бор мебошад.");
+                                    new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
+
+
+                                } catch (IOException e) {
                                     e.printStackTrace();
                                 }
 
-                                editor.putFloat("locLat", (float) location.getLatitude());
-                                editor.putFloat("locLong", (float) location.getLongitude());
-                                editor.putString("address",cityName);
-                                editor.apply();
-
-                                Log.e("city",cityName);
-
-                                //new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
-                                tv_download.setText("Боргирии вактхо.\nЛутфан мунтазир шавед. Ин факат 1 бор мебошад.");
-                                new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
-
                             }
+
+
                         }
                     });
 
@@ -164,10 +166,14 @@ public class SplashActivity extends AppCompatActivity {
             editor.putBoolean("firstRun", false);
             editor.apply();
         }
-        if (sharedPreferences.getString(strDate,"none").equals("none")){
+        else if (sharedPreferences.getString(strDate,"none").equals("none")){
             //download this months prayer times;
+
+            Log.e("New Month","downloading new Month data");
             new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
         }
+
+
 
 
 
@@ -337,7 +343,7 @@ public class SplashActivity extends AppCompatActivity {
                 Log.e("Alarm",testDateFormat.format(alarm));
 
                 Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
-                notificationService.putExtra(NotificationService.NOTIFICATION_SOUND,notSettings[i]);
+                //notificationService.putExtra(NotificationService.NOTIFICATION_SOUND,notSettings[i]);
                 notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Намози "+names[i]);
                 //This is alarm manager
                 PendingIntent pi = PendingIntent.getBroadcast(this, 0 , notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -355,7 +361,7 @@ public class SplashActivity extends AppCompatActivity {
 
         // set Test Alarm
         Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
-        notificationService.putExtra(NotificationService.NOTIFICATION_SOUND,1);
+        //notificationService.putExtra(NotificationService.NOTIFICATION_SOUND,1);
         notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Намози "+"Test");
 
 
@@ -401,6 +407,128 @@ public class SplashActivity extends AppCompatActivity {
 
 
 
+    private void setAlarmForMonth() {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        SimpleDateFormat sharedCalFormat = new SimpleDateFormat("MMYYYY", Locale.US);
+
+
+        Date curDate = new Date(timestamp.getTime());
+
+
+        Log.e("cur", sharedCalFormat.format(curDate));
+        // set todays prayer times by iterating calendar;
+
+        JSONObject calendar = null;
+        try {
+            calendar = new JSONObject(sharedPreferences.getString(sharedCalFormat.format(curDate), "none"));
+            JSONArray data = calendar.getJSONArray("data");
+            SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+            for (int j = 0; j < data.length(); j++) {
+                //Log.e("showndate",apiDateFormat.format(shownDate));
+                //Log.e("dateReadable",data.getJSONObject(j).getJSONObject("date").getString("readable"));
+                setAlarmFromJson(data.getJSONObject(j));
+                Log.d("Alarm","Setting alarm for the day "+data.getJSONObject(j).getJSONObject("date").getString("readable"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        // Test alarms
+
+        /*
+
+        Log.e("AlarmSet","This is test alarm");
+        SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm",Locale.US);
+        Date alarm = null;
+        try {
+            alarm = apiDateFormat.parse("10 Jul 2017 19:58");
+            Log.e("set at",alarm.toString());
+            Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
+            notificationService.putExtra(NotificationService.NOTIFICATION_ID,2);
+            notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Notification Test");
+            //This is alarm manager
+            PendingIntent pi = PendingIntent.getBroadcast(this, 0 , notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+            am.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTime(),
+                    AlarmManager.INTERVAL_DAY, pi);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+*/
+
+
+    }
+
+    public void setAlarmFromJson(JSONObject alarmFromJson) {
+
+        SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm",Locale.US);
+        SimpleDateFormat testDateFormat = new SimpleDateFormat("dd MM yyyy HH:mm:ss",Locale.US);
+
+        String[] names = new String[]{"Бомдод","Офтоббарои","Пешин","Аср","Шом","Хуфтан"};
+
+        try {
+
+            //JSONObject today = new JSONObject(sharedPreferences.getString("todayJson","{None}"));
+            JSONObject timings = alarmFromJson.getJSONObject("timings");
+            JSONObject date = alarmFromJson.getJSONObject("date");
+/*
+            String[] times = new String[]{timings.getString("Fajr").substring(0,timings.getString("Fajr").indexOf(" ")),
+                    timings.getString("Sunrise").substring(0,timings.getString("Sunrise").indexOf(" ")),
+                    timings.getString("Dhuhr").substring(0,timings.getString("Dhuhr").indexOf(" ")),
+                    timings.getString("Asr").substring(0,timings.getString("Asr").indexOf(" ")),
+                    timings.getString("Maghrib").substring(0,timings.getString("Maghrib").indexOf(" ")),
+                    timings.getString("Isha").substring(0,timings.getString("Isha").indexOf(" "))};
+*/
+            String[] times = new String[]{timings.getString("Fajr"),
+                    timings.getString("Sunrise"),
+                    timings.getString("Dhuhr"),
+                    timings.getString("Asr"),
+                    timings.getString("Maghrib"),
+                    timings.getString("Isha")};
+
+            for (int k = 0; k< times.length; k++){
+                Log.e("times",times[k]);
+                times[k] = times[k].substring(0, times[k].indexOf(" "));
+
+                Log.e("times",times[k]);
+            }
+
+            String readable = date.getString("readable");
+
+            String[] alarmTimes = new String[6];
+            for (int i = 0; i < 6; i++){
+                alarmTimes[i] = readable+" "+times[i];
+                Log.e("alarm Time",alarmTimes[i]);
+
+
+                Date alarm = apiDateFormat.parse(alarmTimes[i]);
+
+
+                Log.e("AlarmSet",apiDateFormat.format(alarm));
+
+
+                Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
+                notificationService.putExtra(NotificationService.NOTIFICATION_ID,i);
+                notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Намози "+names[i]);
+
+                //This is alarm manager
+                PendingIntent pi = PendingIntent.getBroadcast(this, 0 , notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
+                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+                am.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTime(),
+                        AlarmManager.INTERVAL_DAY, pi);
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     public class GetPrayerTimesMonth extends AsyncTask<String[],Void,String> {
 
         String cal[];
@@ -436,6 +564,9 @@ public class SplashActivity extends AppCompatActivity {
 
             //download verses
             downloadVerse();
+
+            //set alarm for all times of month
+            //setAlarmForMonth();
 
 
 
@@ -504,7 +635,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
                 /* here I will set notify service*/
-                setAlarm();
+                //setAlarm();
 
             } catch (JSONException e) {
                 e.printStackTrace();

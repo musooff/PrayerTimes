@@ -18,6 +18,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +47,7 @@ import java.util.Random;
 
 import static android.R.attr.category;
 import static android.R.attr.dial;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by moshe on 26/06/2017.
@@ -131,10 +138,43 @@ public class TodayFragment extends Fragment {
 
         //new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
 
+        tv_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int PLACE_AUTOCOMPLETE_REQUEST_CODE = 2;
+                try {
+                    Intent intent =
+                            new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                                    .build(getActivity());
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException e) {
+                    // TODO: Handle the error.
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    // TODO: Handle the error.
+                }
+            }
+        });
 
         setPrayerTimes();
         return view;
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode == RESULT_OK){
+            setAddress(data);
+        }
+    }
+    private void setAddress(Intent data) {
+        Place place = PlacePicker.getPlace(data,getContext());
+        editor.putFloat("locLat", (float) place.getLatLng().latitude);
+        editor.putFloat("locLong", (float) place.getLatLng().longitude);
+        editor.putString("address",place.getAddress().toString());
+        editor.apply();
+
+        tv_location.setText(place.getAddress().toString());
     }
 
     private void setOneDua() {
@@ -160,6 +200,7 @@ public class TodayFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
 
     private void setOneAyah() {
 
@@ -219,6 +260,7 @@ public class TodayFragment extends Fragment {
             }
 
     }
+
 
     private void setOneHadis() {
         Random random = new Random();

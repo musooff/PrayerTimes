@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.cleveroad.loopbar.widget.LoopBarView;
 import com.cleveroad.loopbar.widget.OnItemClickListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -133,11 +134,6 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-
-
-
-
-
     }
 
 
@@ -167,9 +163,12 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            editor.clear();
-            editor.apply();
-            return true;
+            //editor.clear();
+            //editor.apply();
+            //return true;
+
+            Intent disclaimer = new Intent(MainActivity.this,DisclaimerActivity.class);
+            startActivity(disclaimer);
         }
 
         return super.onOptionsItemSelected(item);
@@ -195,10 +194,14 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_qibla) {
             mViewPager.setCurrentItem(3);
             getSupportActionBar().setTitle("Масчидхои Чомеъ");
-        } else if (id == R.id.nav_more) {
+        }
+        /*
+        else if (id == R.id.nav_more) {
             mViewPager.setCurrentItem(5);
             getSupportActionBar().setTitle("Гайра");
+
         }
+        */
         else if (id == R.id.nav_lib){
             mViewPager.setCurrentItem(4);
             getSupportActionBar().setTitle("Китобхона");
