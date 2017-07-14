@@ -17,7 +17,7 @@ public class DisclaimerActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disclaimer);
 
-        getSupportActionBar().setTitle("Хукукхо");
+        getSupportActionBar().setTitle("Ҳуқуқҳо");
 
         ImageView iv_tajik = (ImageView)findViewById(R.id.iv_tajik);
         ImageView iv_english = (ImageView)findViewById(R.id.iv_english);
@@ -37,7 +37,7 @@ public class DisclaimerActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 tv_disclaimer.setText(getResources().getString(R.string.copyritht_tj));
-                getSupportActionBar().setTitle("Хукукхо");
+                getSupportActionBar().setTitle("Ҳуқуқҳо");
 
             }
         });

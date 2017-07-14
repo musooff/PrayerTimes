@@ -64,6 +64,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 public class SplashActivity extends Activity {
 
@@ -77,22 +78,166 @@ public class SplashActivity extends Activity {
     private JSONObject alarmFromJson;
     TextView tvSkip;
 
+    String strDate;
+    String timeZone;
+    int count = 0;
+
+    boolean downloaded = false;
+
+    boolean mainStarted = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        tvSkip = (TextView)findViewById(R.id.tvSkip);
+        tvSkip = (TextView) findViewById(R.id.tvSkip);
 
         /*Get Shared Preference*/
         sharedPreferences = getSharedPreferences("PrayerData", 0);
         editor = sharedPreferences.edit();
+        //editor.clear();
         editor.apply();
 
 
 
-        // Run First Intro Slides
+
+
+
+
+        tv_download = (TextView) findViewById(R.id.tv_download);
+
+
+        /*
+        Get todays date and download times for the month*/
+        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Date today = new Date(timestamp.getTime());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy", Locale.US);
+        strDate = dateFormat.format(today);
+        Log.e("date", strDate);
+
+
+
+        if (sharedPreferences.getBoolean("firstRun", true)) {
+            // Run First Intro Slides
+            runIntroSlides();
+
+            Log.e("loc", "asking location");
+
+
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                Log.e("loc", "requesting location permission");
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION},
+                        1123);
+
+            }
+            else {
+                Log.e("loc", "else part");
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                Log.e("loc", "success");
+                                // Got last known location. In some rare situations this can be null.
+                                if (location != null) {
+                                    String longitude = "Longitude: " + location.getLongitude();
+                                    Log.e("long", longitude);
+                                    String latitude = "Latitude: " + location.getLatitude();
+                                    Log.e("lat", latitude);
+
+                                    Geocoder geocoder;
+                                    List<Address> addresses;
+                                    geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+                                    try {
+                                        addresses = geocoder.getFromLocation(location.getLatitude(),
+                                                location.getLongitude(),
+                                                1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+                                        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                                        Log.e("address", address);
+
+                                        editor.putFloat("locLat", (float) location.getLatitude());
+                                        editor.putFloat("locLong", (float) location.getLongitude());
+                                        editor.putString("address", address);
+                                        editor.apply();
+
+                                        //Log.e("city",cityName);
+
+                                        new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0, 2), strDate.substring(2)});
+
+
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                                else {
+                                    defaultLocation();
+
+                                }
+
+
+                            }
+                        });
+            }
+
+
+
+            setDefaultPreferences();
+            setBookDownloads();
+
+
+            //downloaded = true;
+            editor.putBoolean("firstRun", false);
+            editor.apply();
+
+        }
+        else if (sharedPreferences.getString(strDate, "none").equals("none")) {
+            //download this months prayer times;
+
+            Log.e("New Month", "downloading new Month data");
+            new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0, 2), strDate.substring(2)});
+        }
+        else {
+            Log.e("Else", "Starting intent");
+
+            Intent main = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(main);
+            finish();
+        }
+
+        // download or skip prayer times
+        /*
+        if (sharedPreferences.getBoolean("data",false)){
+            Intent main = new Intent(SplashActivity.this,MainActivity.class);
+            startActivity(main);
+            finish();
+        }
+        else {
+            new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
+            new GetPrayerTimesMonth().execute(new int[]{6,2017});
+        }
+
+        */
+    }
+
+    private void runIntroSlides() {
         final IndicatorOptions indicatorOptions = IndicatorOptions.newBuilder(getApplicationContext())
                 .setElementColorRes(R.color.white)
                 .setSelectedElementColorRes(R.color.grey)
@@ -125,6 +270,7 @@ public class SplashActivity extends Activity {
                                 TransformItem.create(R.id.iv_seventh, Direction.RIGHT_TO_LEFT, 0.8f),
                                 TransformItem.create(R.id.iv_eigth, Direction.RIGHT_TO_LEFT, 0.9f)
                         };
+                        count = 0;
                         break;
                     }
                     case 1: {
@@ -134,6 +280,7 @@ public class SplashActivity extends Activity {
                                 TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
                                 TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
                         };
+                        count = 1;
                         break;
                     }
                     case 2: {
@@ -143,6 +290,7 @@ public class SplashActivity extends Activity {
                                 TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
                                 TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
                         };
+                        count = 2;
                         break;
                     }
                     case 3: {
@@ -152,6 +300,7 @@ public class SplashActivity extends Activity {
                                 TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
                                 TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
                         };
+                        count = 3;
                         break;
                     }
                     case 4: {
@@ -161,6 +310,7 @@ public class SplashActivity extends Activity {
                                 TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
                                 TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
                         };
+                        count = 4;
                         break;
                     }
                     case 5: {
@@ -170,6 +320,7 @@ public class SplashActivity extends Activity {
                                 TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f),
                                 TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f)
                         };
+                        count = 5;
                         break;
                     }
                     case 6: {
@@ -177,6 +328,7 @@ public class SplashActivity extends Activity {
                         tutorialItems = new TransformItem[]{
                                 TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f)
                         };
+                        count = 6;
                         break;
                     }
                     case 7: {
@@ -184,6 +336,7 @@ public class SplashActivity extends Activity {
                         tutorialItems = new TransformItem[]{
                                 TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f)
                         };
+                        count = 7;
                         tvSkip.setVisibility(View.VISIBLE);
                         break;
                     }
@@ -213,144 +366,29 @@ public class SplashActivity extends Activity {
         tvSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent main = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(main);
-                finish();
+
+                Log.e("Clicked with count",count+"");
+
+                if (downloaded && !mainStarted){
+                    Log.e("Main Started","Click");
+
+                    mainStarted = true;
+                    Intent main = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(main);
+                    finish();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"Лутфан, интизор шавед. Боргири карда истодаем!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
-
-        tv_download = (TextView)findViewById(R.id.tv_download);
-
-
-        /*
-        Get todays date and download times for the month*/
-        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        Date today = new Date(timestamp.getTime());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
-        final String strDate = dateFormat.format(today);
-        Log.e("date",strDate);
-
-
-
-
-
-
-        if (sharedPreferences.getBoolean("firstRun",true)) {
-            Log.v("loc", "asking location");
-
-
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                String longitude = "Longitude: " + location.getLongitude();
-                                Log.e("long", longitude);
-                                String latitude = "Latitude: " + location.getLatitude();
-                                Log.e("lat", latitude);
-
-                                Geocoder geocoder;
-                                List<Address> addresses;
-                                geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-
-                                try {
-                                    addresses = geocoder.getFromLocation(location.getLatitude(),
-                                            location.getLongitude(),
-                                            1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-
-                                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                                    String city = addresses.get(0).getLocality();
-                                    String state = addresses.get(0).getAdminArea();
-                                    String country = addresses.get(0).getCountryName();
-                                    String postalCode = addresses.get(0).getPostalCode();
-                                    String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-
-                                    Log.e("address",address);
-
-                                    editor.putFloat("locLat", (float) location.getLatitude());
-                                    editor.putFloat("locLong", (float) location.getLongitude());
-                                    editor.putString("address",address);
-                                    editor.apply();
-
-                                    //Log.e("city",cityName);
-
-                                    //new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
-                                    tv_download.setText("Боргирии вактхо.\nЛутфан мунтазир шавед. Ин факат 1 бор мебошад.");
-                                    new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
-
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-
-
-                        }
-                    });
-
-
-
-            setDefaultPreferences();
-            setBookDownloads();
-
-
-
-            editor.putBoolean("firstRun", false);
-            editor.apply();
-        }
-        else if (sharedPreferences.getString(strDate,"none").equals("none")){
-            //download this months prayer times;
-
-            Log.e("New Month","downloading new Month data");
-            new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0,2),strDate.substring(2)});
-        }
-
-
-
-
-
-        else {
-            Intent main = new Intent(SplashActivity.this,MainActivity.class);
-            startActivity(main);
-            finish();
-        }
-
-        // download or skip prayer times
-        /*
-        if (sharedPreferences.getBoolean("data",false)){
-            Intent main = new Intent(SplashActivity.this,MainActivity.class);
-            startActivity(main);
-            finish();
-        }
-        else {
-            new GetPrayerTimesToday().execute(timestamp.getTime()/1000);
-            new GetPrayerTimesMonth().execute(new int[]{6,2017});
-        }
-
-        */
     }
-
-
 
     private void downloadVerse() {
 
-        tv_download.setText("Боргирии Оятхо.\nЛутфан мунтазир шавед. Ин факат 1 бор мебошад.");
+        //tv_download.setText("Боргирии Оятхо.\nЛутфан мунтазир шавед. Ин факат 1 бор мебошад.");
 
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy", Locale.US);
         final Date today = new Date();
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference mVerse = mRootRef.child("VerseOfMonth");
@@ -361,30 +399,38 @@ public class SplashActivity extends Activity {
                 JSONObject ayahs = new JSONObject();
                 JSONArray data = new JSONArray();
                 try {
-                    ayahs.put("data",data);
-                    for (DataSnapshot day: dataSnapshot.getChildren()){
+                    ayahs.put("data", data);
+                    for (DataSnapshot day : dataSnapshot.getChildren()) {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("surahNameArabic",day.child("surahNameArabic").getValue(String.class));
-                        jsonObject.put("surahNameTajik",day.child("surahNameTajik").getValue(String.class));
-                        jsonObject.put("surahNameTajikTranscribed",day.child("surahNameTajikTranscribed").getValue(String.class));
-                        jsonObject.put("surahNumber",day.child("surahNumber").getValue(Integer.class));
-                        jsonObject.put("verseArabic",day.child("verseArabic").getValue(String.class));
-                        jsonObject.put("verseNumber",day.child("verseNumber").getValue(Integer.class));
-                        jsonObject.put("versePlace",day.child("versePlace").getValue(String.class));
-                        jsonObject.put("verseTajik",day.child("verseTajik").getValue(String.class));
-                        jsonObject.put("verseTajikTranscribed",day.child("verseTajikTranscribed").getValue(String.class));
-                        Log.e("day",jsonObject.toString());
+                        jsonObject.put("surahNameArabic", day.child("surahNameArabic").getValue(String.class));
+                        jsonObject.put("surahNameTajik", day.child("surahNameTajik").getValue(String.class));
+                        jsonObject.put("surahNameTajikTranscribed", day.child("surahNameTajikTranscribed").getValue(String.class));
+                        jsonObject.put("surahNumber", day.child("surahNumber").getValue(Integer.class));
+                        jsonObject.put("verseArabic", day.child("verseArabic").getValue(String.class));
+                        jsonObject.put("verseNumber", day.child("verseNumber").getValue(Integer.class));
+                        jsonObject.put("versePlace", day.child("versePlace").getValue(String.class));
+                        jsonObject.put("verseTajik", day.child("verseTajik").getValue(String.class));
+                        jsonObject.put("verseTajikTranscribed", day.child("verseTajikTranscribed").getValue(String.class));
+                        Log.e("day", jsonObject.toString());
                         data.put(jsonObject);
                     }
 
-                    editor.putString("ayahs"+dateFormat.format(today),ayahs.toString());
+                    editor.putString("ayahs" + dateFormat.format(today), ayahs.toString());
                     editor.apply();
 
 
-                    // start main activity
-                    Intent main = new Intent(SplashActivity.this,MainActivity.class);
-                    startActivity(main);
-                    finish();
+                    downloaded = true;
+                    Log.e("Downloaded with count",count+"");
+
+                    if (count >= 7 && !mainStarted){
+                        Log.e("Main Started","Download");
+                        // start main activity
+                        mainStarted = true;
+                        Intent main = new Intent(SplashActivity.this, MainActivity.class);
+                        startActivity(main);
+                        finish();
+                    }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -400,69 +446,232 @@ public class SplashActivity extends Activity {
 
     }
 
-    private void downloadAndUploadVerse() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy",Locale.US);
-        Date today = new Date();
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(today);
-        int numDates =cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        Log.e("numDates",numDates+"");
-        Random randomAyah = new Random();
-
-        for (int i = 0; i< numDates; i++){
-
-            int ranAyah = randomAyah.nextInt(6236)+1;
-            String str_url = "http://api.alquran.cloud/ayah/"+ranAyah+"/editions/quran-simple,tg.ayati";
-            if (i == numDates-1){
-                new DownloadAyah().execute(new String[]{str_url, String.valueOf(i+1), dateFormat.format(today),"1"});// last download
-            }
-            else {
-                new DownloadAyah().execute(new String[]{str_url, String.valueOf(i+1), dateFormat.format(today),"0"});
-
-            }
-        }
-    }
-
     private void setBookDownloads() {
-        editor.putBoolean("book1_zindaginoma.pdf",false);
-        editor.putBoolean("book2_vasiyatho.pdf",false);
-        editor.putBoolean("book3_musnad.pdf",false);
-        editor.putBoolean("book4_duo.pdf",false);
-        editor.putBoolean("book5_savol.pdf",false);
-        editor.putBoolean("book6_chihil.pdf",false);
+        editor.putBoolean("book1_zindaginoma.pdf", false);
+        editor.putBoolean("book2_vasiyatho.pdf", false);
+        editor.putBoolean("book3_musnad.pdf", false);
+        editor.putBoolean("book4_duo.pdf", false);
+        editor.putBoolean("book5_savol.pdf", false);
+        editor.putBoolean("book6_chihil.pdf", false);
         editor.apply();
     }
 
     private void setDefaultPreferences() {
-        editor.putInt("fajrNot",0);
-        editor.putInt("sunriseNot",3);
-        editor.putInt("dhuhrNot",0);
-        editor.putInt("asrNot",0);
-        editor.putInt("maghribNot",0);
-        editor.putInt("ishaNot",0);
+        editor.putInt("fajrNot", 0);
+        editor.putInt("sunriseNot", 3);
+        editor.putInt("dhuhrNot", 0);
+        editor.putInt("asrNot", 0);
+        editor.putInt("maghribNot", 0);
+        editor.putInt("ishaNot", 0);
         editor.apply();
     }
 
+    public String readStream(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder stringBuilder = new StringBuilder();
+
+        String line;
+
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    public class GetPrayerTimesMonth extends AsyncTask<String[], Void, String> {
+
+        String cal[];
+
+        @Override
+        protected String doInBackground(String[]... params) {
+            cal = params[0];
+
+            String str_url = "http://api.aladhan.com/calendar?latitude=" + sharedPreferences.getFloat("locLat", Float.parseFloat("0.000000")) + "&longitude=" + sharedPreferences.getFloat("locLong", Float.parseFloat("0.000000")) + "&method=3&school=1&month=" + cal[0] + "&year=" + cal[1];
+            Log.e("str_url", str_url);
+            try {
+                URL url = new URL(str_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
+                return readStream(in);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Log.e("sharedDate", cal[0] + "" + cal[1]);
+            editor.putString(cal[0] + "" + cal[1], s);
+            editor.putBoolean("data", true);
+            editor.apply();
+
+            //download verses
+            downloadVerse();
+
+            //set alarm for all times of month
+            //setAlarmForMonth();
+
+
+        }
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1123: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    mFusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations this can be null.
+                                    if (location != null) {
+                                        String longitude = "Longitude: " + location.getLongitude();
+                                        Log.e("long", longitude);
+                                        String latitude = "Latitude: " + location.getLatitude();
+                                        Log.e("lat", latitude);
+
+                                        Geocoder geocoder;
+                                        List<Address> addresses;
+                                        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+                                        try {
+                                            addresses = geocoder.getFromLocation(location.getLatitude(),
+                                                    location.getLongitude(),
+                                                    1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+                                            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                                            Log.e("address", address);
+
+                                            editor.putFloat("locLat", (float) location.getLatitude());
+                                            editor.putFloat("locLong", (float) location.getLongitude());
+                                            editor.putString("address", address);
+                                            editor.apply();
+
+                                            //Log.e("city",cityName);
+
+                                            new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0, 2), strDate.substring(2)});
+
+
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                    else {
+                                        defaultLocation();
+                                    }
+
+
+                                }
+                            });
+
+                } else {
+
+                    defaultLocation();
+
+                }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+
+            }
+
+        }
+    }
+
+    private void defaultLocation(){
+        // permission denied, Getting prayer times for Dushanbe 38.559800, 68.787000
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(38.559800,
+                    68.787000,
+                    1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            Log.e("address", address);
+
+            Toast.makeText(getApplicationContext(),"Ичоза ба истифида барии макон гирифта нашуд. Вактхои Душанберо бор мекунем!",Toast.LENGTH_LONG).show();
+
+            editor.putFloat("locLat", (float) 38.559800);
+            editor.putFloat("locLong", (float) 68.787000);
+            editor.putString("address", address);
+            editor.apply();
+
+            //Log.e("city",cityName);
+
+            new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0, 2), strDate.substring(2)});
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     *
+     *      Below are under construction
+     *
+     */
 
     private void setAlarm() {
 
 
-        SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm",Locale.US);
-        SimpleDateFormat testDateFormat = new SimpleDateFormat("dd MM yyyy HH:mm:ss",Locale.US);
+        SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.US);
+        SimpleDateFormat testDateFormat = new SimpleDateFormat("dd MM yyyy HH:mm:ss", Locale.US);
 
-        String[] names = new String[]{"Бомдод","Офтоббарои","Пешин","Аср","Шом","Хуфтан"};
+        String[] names = new String[]{"Бомдод", "Офтоббарои", "Пешин", "Аср", "Шом", "Хуфтан"};
 
         try {
 
-            int[] notSettings = new int[]{sharedPreferences.getInt("fajrNot",0),
-                    sharedPreferences.getInt("sunriseNot",3),
-                    sharedPreferences.getInt("dhuhrNot",0),
-                    sharedPreferences.getInt("asrNot",0),
-                    sharedPreferences.getInt("maghribNot",0),
-                    sharedPreferences.getInt("ishaNot",0)};
+            int[] notSettings = new int[]{sharedPreferences.getInt("fajrNot", 0),
+                    sharedPreferences.getInt("sunriseNot", 3),
+                    sharedPreferences.getInt("dhuhrNot", 0),
+                    sharedPreferences.getInt("asrNot", 0),
+                    sharedPreferences.getInt("maghribNot", 0),
+                    sharedPreferences.getInt("ishaNot", 0)};
 
-            JSONObject today = new JSONObject(sharedPreferences.getString("todayJson","{None}"));
+            JSONObject today = new JSONObject(sharedPreferences.getString("todayJson", "{None}"));
             JSONObject timings = today.getJSONObject("timings");
             JSONObject date = today.getJSONObject("date");
 /*
@@ -483,16 +692,16 @@ public class SplashActivity extends Activity {
             String readable = date.getString("readable");
 
             String[] alarmTimes = new String[6];
-            for (int i = 0; i < 6; i++){
-                alarmTimes[i] = readable+" "+times[i];
+            for (int i = 0; i < 6; i++) {
+                alarmTimes[i] = readable + " " + times[i];
                 Date alarm = apiDateFormat.parse(alarmTimes[i]);
-                Log.e("Alarm",testDateFormat.format(alarm));
+                Log.e("Alarm", testDateFormat.format(alarm));
 
-                Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
+                Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
                 //notificationService.putExtra(NotificationService.NOTIFICATION_SOUND,notSettings[i]);
-                notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Намози "+names[i]);
+                notificationService.putExtra(NotificationService.NOTIFICATION_NAME, "Намози " + names[i]);
                 //This is alarm manager
-                PendingIntent pi = PendingIntent.getBroadcast(this, 0 , notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pi = PendingIntent.getBroadcast(this, 0, notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
                 AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
                 am.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTime(),
                         AlarmManager.INTERVAL_DAY, pi);
@@ -506,9 +715,9 @@ public class SplashActivity extends Activity {
         }
 
         // set Test Alarm
-        Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
+        Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
         //notificationService.putExtra(NotificationService.NOTIFICATION_SOUND,1);
-        notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Намози "+"Test");
+        notificationService.putExtra(NotificationService.NOTIFICATION_NAME, "Намози " + "Test");
 
 
         /*
@@ -527,31 +736,6 @@ public class SplashActivity extends Activity {
         }
 */
     }
-
-
-    public String readStream(InputStream is) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder stringBuilder = new StringBuilder();
-
-        String line;
-
-        try{
-            while ((line = reader.readLine())!=null){
-                stringBuilder.append(line).append('\n');
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try{
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return stringBuilder.toString();
-    }
-
-
 
     private void setAlarmForMonth() {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -573,7 +757,7 @@ public class SplashActivity extends Activity {
                 //Log.e("showndate",apiDateFormat.format(shownDate));
                 //Log.e("dateReadable",data.getJSONObject(j).getJSONObject("date").getString("readable"));
                 setAlarmFromJson(data.getJSONObject(j));
-                Log.d("Alarm","Setting alarm for the day "+data.getJSONObject(j).getJSONObject("date").getString("readable"));
+                Log.d("Alarm", "Setting alarm for the day " + data.getJSONObject(j).getJSONObject("date").getString("readable"));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -608,10 +792,10 @@ public class SplashActivity extends Activity {
 
     public void setAlarmFromJson(JSONObject alarmFromJson) {
 
-        SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm",Locale.US);
-        SimpleDateFormat testDateFormat = new SimpleDateFormat("dd MM yyyy HH:mm:ss",Locale.US);
+        SimpleDateFormat apiDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.US);
+        SimpleDateFormat testDateFormat = new SimpleDateFormat("dd MM yyyy HH:mm:ss", Locale.US);
 
-        String[] names = new String[]{"Бомдод","Офтоббарои","Пешин","Аср","Шом","Хуфтан"};
+        String[] names = new String[]{"Бомдод", "Офтоббарои", "Пешин", "Аср", "Шом", "Хуфтан"};
 
         try {
 
@@ -633,33 +817,33 @@ public class SplashActivity extends Activity {
                     timings.getString("Maghrib"),
                     timings.getString("Isha")};
 
-            for (int k = 0; k< times.length; k++){
-                Log.e("times",times[k]);
+            for (int k = 0; k < times.length; k++) {
+                Log.e("times", times[k]);
                 times[k] = times[k].substring(0, times[k].indexOf(" "));
 
-                Log.e("times",times[k]);
+                Log.e("times", times[k]);
             }
 
             String readable = date.getString("readable");
 
             String[] alarmTimes = new String[6];
-            for (int i = 0; i < 6; i++){
-                alarmTimes[i] = readable+" "+times[i];
-                Log.e("alarm Time",alarmTimes[i]);
+            for (int i = 0; i < 6; i++) {
+                alarmTimes[i] = readable + " " + times[i];
+                Log.e("alarm Time", alarmTimes[i]);
 
 
                 Date alarm = apiDateFormat.parse(alarmTimes[i]);
 
 
-                Log.e("AlarmSet",apiDateFormat.format(alarm));
+                Log.e("AlarmSet", apiDateFormat.format(alarm));
 
 
-                Intent notificationService = new Intent(getApplicationContext(),NotificationService.class);
-                notificationService.putExtra(NotificationService.NOTIFICATION_ID,i);
-                notificationService.putExtra(NotificationService.NOTIFICATION_NAME,"Намози "+names[i]);
+                Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
+                notificationService.putExtra(NotificationService.NOTIFICATION_ID, i);
+                notificationService.putExtra(NotificationService.NOTIFICATION_NAME, "Намози " + names[i]);
 
                 //This is alarm manager
-                PendingIntent pi = PendingIntent.getBroadcast(this, 0 , notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pi = PendingIntent.getBroadcast(this, 0, notificationService, PendingIntent.FLAG_UPDATE_CURRENT);
                 AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
                 am.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTime(),
                         AlarmManager.INTERVAL_DAY, pi);
@@ -675,124 +859,39 @@ public class SplashActivity extends Activity {
     }
 
 
-    public class GetPrayerTimesMonth extends AsyncTask<String[],Void,String> {
+    /***
+     *
+     *     Below are personal
+     *
+     */
 
-        String cal[];
-        @Override
-        protected String doInBackground(String[]... params) {
-            cal = params[0];
+    private void downloadAndUploadVerse() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy", Locale.US);
+        Date today = new Date();
 
-            String str_url = "http://api.aladhan.com/calendar?latitude="+sharedPreferences.getFloat("locLat", Float.parseFloat("0.000000"))+"&longitude="+sharedPreferences.getFloat("locLong", Float.parseFloat("0.000000"))+"&timezonestring=Asia/Seoul&method=3&school=1&month="+cal[0]+"&year="+cal[1];
-            Log.e("str_url",str_url);
-            try {
-                URL url = new URL(str_url);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
-                return readStream(in);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        int numDates = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        Log.e("numDates", numDates + "");
+        Random randomAyah = new Random();
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+        for (int i = 0; i < numDates; i++) {
+
+            int ranAyah = randomAyah.nextInt(6236) + 1;
+            String str_url = "http://api.alquran.cloud/ayah/" + ranAyah + "/editions/quran-simple,tg.ayati";
+            if (i == numDates - 1) {
+                new DownloadAyah().execute(new String[]{str_url, String.valueOf(i + 1), dateFormat.format(today), "1"});// last download
+            } else {
+                new DownloadAyah().execute(new String[]{str_url, String.valueOf(i + 1), dateFormat.format(today), "0"});
+
             }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            Log.e("sharedDate",cal[0]+""+cal[1]);
-            editor.putString(cal[0]+""+cal[1],s);
-            editor.putBoolean("data",true);
-            editor.apply();
-
-            //download verses
-            downloadVerse();
-
-            //set alarm for all times of month
-            //setAlarmForMonth();
-
-
-
         }
     }
 
-
-    public class GetPrayerTimesToday extends AsyncTask<Long,Void,String>{
-        @Override
-        protected String doInBackground(Long... params) {
-            String str_url = "http://api.aladhan.com/timings/"+params[0]+"?latitude="+sharedPreferences.getFloat("locLat", (float) 0.000000)+"&longitude="+sharedPreferences.getFloat("locLong", Float.parseFloat("0.000000"))+"&timezonestring=Asia/Seoul&method=3&school=1";
-            Log.e("str_url",str_url);
-            try {
-                URL url = new URL(str_url);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
-                return readStream(in);
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            try {
-                JSONObject jsonObject= new JSONObject(s);
-                JSONObject data = jsonObject.getJSONObject("data");
-                JSONObject timings = data.getJSONObject("timings");
-                JSONObject date = data.getJSONObject("date");
-
-                editor.putString("todayJson",data.toString());
-
-                String fajr,sunrise,dhuhr,asr,sunset,maghrib,isha,imsak,midnight;
-
-                fajr = timings.getString("Fajr");
-                sunrise = timings.getString("Sunrise");
-                dhuhr = timings.getString("Dhuhr");
-                asr = timings.getString("Asr");
-                sunset = timings.getString("Sunset");
-                maghrib = timings.getString("Maghrib");
-                isha = timings.getString("Isha");
-                imsak = timings.getString("Imsak");
-                midnight = timings.getString("Midnight");
-
-                editor.putString("fajr",fajr);
-                editor.putString("sunrise",sunrise);
-                editor.putString("dhuhr",dhuhr);
-                editor.putString("asr",asr);
-                editor.putString("sunset",sunset);
-                editor.putString("maghrib",maghrib);
-                editor.putString("isha",isha);
-                editor.putString("imsak",imsak);
-                editor.putString("midnight",midnight);
-
-                editor.putString("dateReadable",date.getString("readable"));
-                editor.putString("dateTimestamp",date.getString("timestamp"));
-
-                editor.apply();
-
-
-                /* here I will set notify service*/
-                //setAlarm();
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    public class DownloadAyah extends AsyncTask<String[],Void,String> {
+    public class DownloadAyah extends AsyncTask<String[], Void, String> {
         String day;
         String month;
+
         @Override
         protected String doInBackground(String[]... params) {
 
@@ -801,7 +900,7 @@ public class SplashActivity extends Activity {
 
             try {
                 URL url = new URL(params[0][0]);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
                 return readStream(in);
 
@@ -819,7 +918,7 @@ public class SplashActivity extends Activity {
             super.onPostExecute(s);
 
             try {
-                JSONObject jsonObject= new JSONObject(s);
+                JSONObject jsonObject = new JSONObject(s);
                 JSONArray data = jsonObject.getJSONArray("data");
 
                 JSONObject tajik = data.getJSONObject(1);
@@ -865,22 +964,6 @@ public class SplashActivity extends Activity {
         }
     }
 
-    private final class OnSkipClickListener implements View.OnClickListener {
-
-        @NonNull
-        private final Context mContext;
-
-        OnSkipClickListener(@NonNull Context context) {
-            mContext = SplashActivity.this;
-        }
-
-        @Override
-        public void onClick(View v) {
-            Intent splash = new Intent(mContext,MainActivity.class);
-            mContext.startActivity(splash);
-            ((Activity)mContext).finish();
-        }
-    }
 
 
 }

@@ -46,7 +46,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:textColor="@color/white"
-        android:text="Номхои Худованд"
+        android:text="Номҳои Худованд"
         android:textSize="30sp"
         android:textStyle="bold"
         android:layout_marginBottom="70dp"

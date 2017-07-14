@@ -155,6 +155,18 @@ public class TodayFragment extends Fragment {
             }
         });
 
+        tv_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Барномаи Исломӣ анакнун бо забони тоҷикӣ");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.simurgh.prayertimes");
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+            }
+        });
+
         setPrayerTimes();
         return view;
 
@@ -174,7 +186,19 @@ public class TodayFragment extends Fragment {
         editor.putString("address",place.getAddress().toString());
         editor.apply();
 
+        String strDate;
+        /*
+        Get todays date and download times for the month*/
+        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Date today = new Date(timestamp.getTime());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy", Locale.US);
+        strDate = dateFormat.format(today);
+        Log.e("Getting for date", strDate);
+
+
         tv_location.setText(place.getAddress().toString());
+        new GetPrayerTimesMonth().execute(new String[]{strDate.substring(0, 2), strDate.substring(2)});
+
     }
 
     private void setOneDua() {
@@ -200,7 +224,6 @@ public class TodayFragment extends Fragment {
             e.printStackTrace();
         }
     }
-
 
     private void setOneAyah() {
 
@@ -297,117 +320,6 @@ public class TodayFragment extends Fragment {
         tv_name_tajik.setText(singleName[2]);
     }
 
-
-    public class DownloadAyah extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                URL url = new URL(params[0]);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
-                return readStream(in);
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            try {
-                JSONObject jsonObject= new JSONObject(s);
-                JSONArray data = jsonObject.getJSONArray("data");
-                JSONObject tajik = data.getJSONObject(1);
-                String text = tajik.getString("text");
-                tv_verse.setText(text);
-
-                JSONObject surah = tajik.getJSONObject("surah");
-                String surahName = surah.getString("englishName");
-                int surahNumber = surah.getInt("number");
-
-                int verseNumber = tajik.getInt("numberInSurah");
-
-                tv_verse_name.setText(surahName+"("+surahNumber+":"+verseNumber+")");
-
-                editor.putBoolean("todayVerseAvailable",true);
-                editor.putString("todayVerse",jsonObject.toString());
-                editor.apply();
-
-                setPrayerTimes();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-
-    public class GetPrayerTimesToday extends AsyncTask<Long,Void,String> {
-        @Override
-        protected String doInBackground(Long... params) {
-            String str_url = "http://api.aladhan.com/timings/"+params[0]+"?latitude=36.369400&longitude=127.364000&timezonestring=Asia/Seoul&method=3&school=1";
-
-            try {
-                URL url = new URL(str_url);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
-                return readStream(in);
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            try {
-                JSONObject jsonObject= new JSONObject(s);
-                JSONObject data = jsonObject.getJSONObject("data");
-                JSONObject timings = data.getJSONObject("timings");
-                String fajr,sunrise,dhuhr,asr,sunset,maghrib,isha,imsak,midnight;
-                fajr = timings.getString("Fajr");
-                sunrise = timings.getString("Sunrise");
-                dhuhr = timings.getString("Dhuhr");
-                asr = timings.getString("Asr");
-                sunset = timings.getString("Sunset");
-                maghrib = timings.getString("Maghrib");
-                isha = timings.getString("Isha");
-                imsak = timings.getString("Imsak");
-                midnight = timings.getString("Midnight");
-                editor.putString("fajr",fajr);
-                editor.putString("sunrise",sunrise);
-                editor.putString("dhuhr",dhuhr);
-                editor.putString("asr",asr);
-                editor.putString("sunset",sunset);
-                editor.putString("maghrib",maghrib);
-                editor.putString("isha",isha);
-                editor.putString("imsak",imsak);
-                editor.putString("midnight",midnight);
-                editor.apply();
-
-                setPrayerTimes();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-
-
     private void setPrayerTimes(){
 
         String fajr,sunrise,dhuhr,asr,sunset,maghrib,isha,imsak,midnight;
@@ -417,7 +329,7 @@ public class TodayFragment extends Fragment {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         Date curDate = new Date(timestamp.getTime());
-        SimpleDateFormat sharedCalFormat = new SimpleDateFormat("MMYYYY", Locale.US);
+        SimpleDateFormat sharedCalFormat = new SimpleDateFormat("MMyyyy", Locale.US);
         JSONObject calendar = null;
         try {
             calendar = new JSONObject(sharedPreferences.getString(sharedCalFormat.format(curDate),"none"));
@@ -641,5 +553,51 @@ public class TodayFragment extends Fragment {
             }
         });
 
+    }
+
+
+    public class GetPrayerTimesMonth extends AsyncTask<String[], Void, String> {
+
+        String cal[];
+
+        @Override
+        protected String doInBackground(String[]... params) {
+            cal = params[0];
+
+            Log.e("Data Location", "New Location");
+
+
+            String str_url = "http://api.aladhan.com/calendar?latitude=" + sharedPreferences.getFloat("locLat", Float.parseFloat("0.000000")) + "&longitude=" + sharedPreferences.getFloat("locLong", Float.parseFloat("0.000000")) + "&method=3&school=1&month=" + cal[0] + "&year=" + cal[1];
+            Log.e("str_url", str_url);
+            try {
+                URL url = new URL(str_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
+                return readStream(in);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Log.e("sharedDate", cal[0] + "" + cal[1]);
+            editor.putString(cal[0] + "" + cal[1], s);
+            editor.putBoolean("data", true);
+            editor.apply();
+
+            getActivity().finish();
+            getActivity().startActivity(getActivity().getIntent());
+
+
+
+        }
     }
 }

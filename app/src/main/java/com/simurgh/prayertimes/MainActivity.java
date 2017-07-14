@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.AppBarLayout;
@@ -23,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cleveroad.loopbar.widget.LoopBarView;
 import com.cleveroad.loopbar.widget.OnItemClickListener;
@@ -103,19 +105,19 @@ public class MainActivity extends AppCompatActivity
                 switch (position){
                     case 0:
                         mViewPager.setCurrentItem(0);
-                        getSupportActionBar().setTitle("Вактхои Намоз");
+                        getSupportActionBar().setTitle("Вақтҳои Намоз");
                         break;
                     case 1:
                         mViewPager.setCurrentItem(1);
-                        getSupportActionBar().setTitle("Вактхои Намоз");
+                        getSupportActionBar().setTitle("Вақтҳои Намоз");
                         break;
                     case 2:
                         mViewPager.setCurrentItem(2);
-                        getSupportActionBar().setTitle("Куръони Карим");
+                        getSupportActionBar().setTitle("Қуръони Карим");
                         break;
                     case 3:
                         mViewPager.setCurrentItem(3);
-                        getSupportActionBar().setTitle("Масчидхои Чомеъ");
+                        getSupportActionBar().setTitle("Масҷидҳои ҷомеъ");
                         break;
                     case 4:
                         mViewPager.setCurrentItem(4);
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case 5:
                         mViewPager.setCurrentItem(5);
-                        getSupportActionBar().setTitle("Гайра");
+                        getSupportActionBar().setTitle("Ғайра");
                         break;
 
 
@@ -306,5 +308,33 @@ public class MainActivity extends AppCompatActivity
         int hours = Integer.parseInt(units[0]); //first element
         int minutes = Integer.parseInt(units[1]); //second element
         return 60 * hours + minutes;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 11235: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    Toast.makeText(getApplicationContext(),"Анакнун, шумо метавонед китобхоро боргири ва мутолиа кунед.",Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(getApplicationContext(),"Лутфан барои боргирии китобхо ба мо ичоза дихед.",Toast.LENGTH_SHORT).show();
+
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 }

@@ -70,7 +70,7 @@ public class MosqueFragment extends Fragment {
         dataMosques.add(new DataMosque("Масҷиди ҷомеи марказии ноҳияи Ҳисор ба номи Имоми Аъзам","Суроға: н. Ҳисор, ҷ/д Мирзо Ризо,деҳаи Тӯда, тел: +(992) 918 86 95 15",R.drawable.mj_imom_hisor,R.string.mj_imom_hisor));
         dataMosques.add(new DataMosque("Масҷиди ба номи ҳазрати Билол (р)-и ноҳияи Фирдавсии шаҳри Душанбе","ш. Душанбе, н. Фирдавсӣ, маҳаллаи 64, кӯч. Фирдавсӣ, 61 Тел: +(992) 915533474 ",R.drawable.mj_hz_bilon_firdavsi,R.string.mj_hz_bilol));
         dataMosques.add(new DataMosque("Масҷиди ҷомеи марказии н.Шоҳмансури ш.Душанбе ба номи Имоми Аъзам","ш. Душанбе, кӯч.Айни 46, Телефон :+(992) 937038118",R.drawable.mj_imom_shomansur,R.string.mj_imom_shomansur));
-        dataMosques.add(new DataMosque("Масҷиди ҷомеи марказии н. Рӯдакӣ ба номи Мавлоно Яъқуби Чархӣ","н. Рӯдакӣ, ҷамоати деҳоти\"Гулистон\" Тел :+(992) 951857777",R.drawable.mj_charxi_rudaki,R.drawable.mj_charxi_rudaki));
+        dataMosques.add(new DataMosque("Масҷиди ҷомеи марказии н. Рӯдакӣ ба номи Мавлоно Яъқуби Чархӣ","н. Рӯдакӣ, ҷамоати деҳоти\"Гулистон\" Тел :+(992) 951857777",R.drawable.mj_charxi_rudaki,R.string.mj_charxi_dushanbe));
         dataMosques.add(new DataMosque("Масҷиди ҷомеи ш. Душанбе ба номи Умари Форуқ (р)", "ш. Душанбе, н.Фирдавсӣ, маҳаллаи 61, кӯч. 50-солагӣ, Тел:+(992) 935230214",R.drawable.mj_hz_umar_dushanbe,R.string.mj_hz_umar_dushanbe));
 
         mAdapter.notifyDataSetChanged();

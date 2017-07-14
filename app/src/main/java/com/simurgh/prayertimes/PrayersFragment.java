@@ -102,7 +102,7 @@ public class PrayersFragment extends Fragment {
         setNotifications();
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        SimpleDateFormat sharedCalFormat = new SimpleDateFormat("MMYYYY", Locale.US);
+        SimpleDateFormat sharedCalFormat = new SimpleDateFormat("MMyyyy", Locale.US);
 
 
 

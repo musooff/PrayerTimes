@@ -87,8 +87,12 @@ public class QuranFragment extends Fragment {
                 for (int i = 0; i <data.length(); i++){
                     int number = data.getJSONObject(i).getInt("number");
                     String name = data.getJSONObject(i).getString("name");
-                    String englishName = data.getJSONObject(i).getString("englishName");
-                    String englishNameTranslation = data.getJSONObject(i).getString("englishNameTranslation");
+                    //String englishName = data.getJSONObject(i).getString("englishName");
+                    //String englishNameTranslation = data.getJSONObject(i).getString("englishNameTranslation");
+
+                    String englishName = dataSurah.getJSONObject(i).getString("name");
+                    String englishNameTranslation = dataSurah.getJSONObject(i).getString("trans");
+
                     int numberOfAyahs = data.getJSONObject(i).getInt("numberOfAyahs");
                     String revelationType = data.getJSONObject(i).getString("revelationType");
                     dataSuraNames.add(new DataSuraNames(name,englishName,englishNameTranslation,number));

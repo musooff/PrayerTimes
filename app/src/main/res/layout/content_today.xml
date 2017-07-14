@@ -124,7 +124,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Ояти имруза"
+                                android:text="Ояти имрӯза"
                                 android:textSize="15sp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"/>
@@ -186,7 +186,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Хадиси имруза"
+                                android:text="Ҳадиси имрӯза"
                                 android:textSize="15sp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"/>
@@ -249,7 +249,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Дуои имруза"
+                                android:text="Дуои имрӯза"
                                 android:textSize="15sp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"/>
@@ -335,14 +335,14 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Номзои Худованд"
+                                android:text="Номҳои Худованд"
                                 android:textSize="15sp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"/>
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Асмо ал Хусна"
+                                android:text="Асмо ал Ҳусна"
                                 android:textSize="12sp"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -376,7 +376,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_read_name"
-                        android:text="Хамаро боз кунед"
+                        android:text="Ҳамаро боз кунед"
                         android:gravity="right"
                         android:textColor="@color/colorPrimary"
                         android:clickable="true"
@@ -414,14 +414,14 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Вактхои Намоз"
+                                android:text="Вақтҳои Намоз"
                                 android:textSize="15sp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"/>
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Ин барномаро ба дустон тавсия дихед"
+                                android:text="Ин барномаро ба дӯстон тавсия диҳед"
                                 android:textSize="12sp"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -431,12 +431,12 @@
 
                         android:textColor="@color/black"
                         android:textSize="15sp"
-                        android:text="Аз ман, агарчанде ки як оят бошад хам, ба мардум бирасонед - Мухаммад с.а.в" />
+                        android:text="@string/convey" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tv_share"
-                        android:text="Тавсия медихам"
+                        android:text="Тавсия медиҳам"
                         android:gravity="right"
                         android:textColor="@color/colorPrimary"
                         android:clickable="true"
@@ -474,7 +474,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Гайра (Дар зери таъмирот)"
+                                android:text="Ғайра (Дар зери таъмирот)"
                                 android:textSize="15sp"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"/>
@@ -483,7 +483,7 @@
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
                                 android:ellipsize="end"
-                                android:text="Дар муддати кутох бахри шумо пешкаш мегардонем!"
+                                android:text="Дар муддати кӯтоҳ баҳри шумо пешкаш мегардонем"
                                 android:textSize="12sp"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -515,7 +515,7 @@
                                     android:gravity="center"
                                     android:maxLines="2"
                                     android:ellipsize="end"
-                                    android:text="Закот хисобкунак"/>
+                                    android:text="Закот ҳисобкунак"/>
                             </LinearLayout>
                             <LinearLayout
                                 android:layout_width="60dp"
@@ -533,7 +533,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="Кибла"/>
+                                    android:text="Қибла"/>
                             </LinearLayout>
                             <LinearLayout
                                 android:layout_width="60dp"
@@ -551,7 +551,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="Таквими исломи"/>
+                                    android:text="Тақвими исломӣ"/>
                             </LinearLayout>
 
                             <LinearLayout
@@ -570,7 +570,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="Тасбех"/>
+                                    android:text="Тасбеҳ"/>
                             </LinearLayout>
 
                             <LinearLayout
@@ -589,7 +589,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="Ва дигархо"/>
+                                    android:text="Ва дигарҳо"/>
                             </LinearLayout>
                         </LinearLayout>
                     </HorizontalScrollView>

@@ -12,6 +12,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="English name"
+            android:textSize="25sp"
             android:gravity="center"
             android:textColor="@color/black"
             android:id="@+id/tv_eng"/>
@@ -19,9 +20,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Arabic name"
+            android:textSize="25sp"
             android:id="@+id/tv_arabic"
             android:layout_alignParentRight="true"
-            android:textColor="@color/black"
+            android:textColor="@color/green"
             android:gravity="center"/>
     </RelativeLayout>
     <android.support.v7.widget.RecyclerView

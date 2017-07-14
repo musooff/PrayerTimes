@@ -67,7 +67,7 @@ public class NamesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_names);
 
-        getSupportActionBar().setTitle("Номхои Худованд");
+        getSupportActionBar().setTitle("Номҳои Худованд");
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_names);
 

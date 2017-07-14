@@ -5,19 +5,19 @@
         <item
             android:id="@+id/nav_today"
             android:icon="@drawable/ic_today_white"
-            android:title="Имруз" />
+            android:title="Имрӯз" />
         <item
             android:id="@+id/nav_prayers"
             android:icon="@drawable/ic_prayers_white"
-            android:title="Вактхо" />
+            android:title="Вақтҳо" />
         <item
             android:id="@+id/nav_quran"
             android:icon="@drawable/ic_quran_white"
-            android:title="Курон" />
+            android:title="Қуръон" />
         <item
             android:id="@+id/nav_qibla"
             android:icon="@drawable/ic_mosque_white"
-            android:title="Масчидхо" />
+            android:title="Масҷидҳо" />
         <item
             android:id="@+id/nav_lib"
             android:icon="@drawable/ic_library_white"
@@ -27,7 +27,7 @@
     <item
         android:id="@+id/nav_more"
         android:icon="@drawable/ic_more_white"
-        android:title="Гайра" />
+        android:title="Ғайра" />
               -->
 
     </group>
