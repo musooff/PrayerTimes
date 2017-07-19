@@ -19,7 +19,6 @@
             android:id="@+id/iv_english"
             android:src="@drawable/ic_english"
             android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
             />
         <ImageView
             android:layout_width="50dp"
@@ -28,7 +27,6 @@
             android:id="@+id/iv_tajik"
             android:src="@drawable/ic_translate_black"
             android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
             />
     </LinearLayout>
     <ScrollView

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_zakat"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_zakat" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Хисобкунии закот"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_qibla"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_qibla" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Кибла"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_calendar"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_calendar" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Таквими исломи"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_tasbih"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_tasbih" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Тасбех"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_andmore"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_andmore" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Ва дигархо"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_settings"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_settings" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Танзимот"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_help"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_help" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Ёри ва тамос"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/ll_disclaimer"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_disclaimer" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Хукукхо"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

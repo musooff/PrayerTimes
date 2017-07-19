@@ -46,16 +46,14 @@
                     android:id="@+id/iv_sound"
                     android:src="@drawable/ic_play_black"
                     android:layout_marginRight="10dp"
-                    android:clickable="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                    android:clickable="true"/>
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:id="@+id/iv_tran_idk"
                     android:src="@drawable/ic_translate_black"
                     android:layout_marginLeft="10dp"
-                    android:clickable="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                    android:clickable="true"/>
             </LinearLayout>
         </LinearLayout>
 

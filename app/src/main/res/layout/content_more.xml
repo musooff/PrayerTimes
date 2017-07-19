@@ -18,8 +18,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:id="@+id/ll_zakat"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless">
+            android:clickable="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -47,8 +46,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:id="@+id/ll_qibla"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless">
+            android:clickable="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -75,8 +73,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:id="@+id/ll_calendar"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless">
+            android:clickable="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -103,8 +100,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:id="@+id/ll_tasbih"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless">
+            android:clickable="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -131,8 +127,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:id="@+id/ll_andmore"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless">
+            android:clickable="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -161,8 +156,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:id="@+id/ll_settings"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless">
+            android:clickable="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -189,8 +183,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:id="@+id/ll_help"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless">
+            android:clickable="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -217,8 +210,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:id="@+id/ll_disclaimer"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless">
+            android:clickable="true">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"

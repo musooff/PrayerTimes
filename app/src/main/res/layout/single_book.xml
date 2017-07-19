@@ -32,8 +32,7 @@
                     android:layout_centerVertical="true"
                     android:id="@+id/iv_download"
                     android:layout_alignParentRight="true"
-                    android:clickable="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                    android:clickable="true"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
