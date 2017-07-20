@@ -311,13 +311,14 @@ public class TodayFragment extends Fragment {
         String[] eachNames = names.split("\n");
         String[] ignoreFirstEmpty = Arrays.copyOfRange(eachNames,1,eachNames.length);
         //Log.e("size",ignoreFirstEmpty[0]);
-        int randomInt = random.nextInt(99);
+        int randomInt = 1+random.nextInt(99);
         Log.e("rand",randomInt+"");
         String[] singleName;
         singleName = eachNames[randomInt].split(" — ");
         tv_name_arabic.setText(singleName[1]);
         tv_name_arabic_transcribed.setText(singleName[0]);
         tv_name_tajik.setText(singleName[2]);
+
     }
 
     private void setPrayerTimes(){
