@@ -9,7 +9,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="10dp" />
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <LinearLayout
@@ -32,12 +32,12 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp" />
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <LinearLayout
@@ -60,11 +60,11 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp" />
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <LinearLayout
@@ -87,11 +87,11 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp" />
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <LinearLayout
@@ -114,11 +114,11 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp" />
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <LinearLayout
@@ -141,13 +141,13 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="30dp" />
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <LinearLayout
@@ -170,11 +170,11 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp" />
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <LinearLayout
@@ -197,11 +197,11 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp" />
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <LinearLayout
@@ -224,5 +224,5 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

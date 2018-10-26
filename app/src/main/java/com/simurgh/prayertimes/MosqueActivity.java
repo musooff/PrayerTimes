@@ -3,10 +3,11 @@ package com.simurgh.prayertimes;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by moshe on 28/06/2017.

@@ -3,13 +3,14 @@ package com.simurgh.prayertimes;
 import android.graphics.pdf.PdfRenderer;
 import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class BookActivity extends AppCompatActivity {
 
