@@ -6,29 +6,41 @@
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:padding="10dp">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="English name"
             android:textSize="25sp"
             android:gravity="center"
-            android:textColor="@color/black"
-            android:id="@+id/tv_eng"/>
+            android:textStyle="bold"
+            android:textColor="@color/blackDark"
+            android:id="@+id/title_transcribed"/>
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="Arabic name"
             android:textSize="25sp"
-            android:id="@+id/tv_arabic"
+            android:id="@+id/title_name"
+            android:textStyle="bold"
             android:layout_alignParentRight="true"
-            android:textColor="@color/green"
-            android:gravity="center"/>
+            android:textColor="@color/greenMain"
+            android:gravity="center" />
+
     </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_bismillah"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="16dp"
         android:id="@+id/rv_ayats">
 
     </androidx.recyclerview.widget.RecyclerView>

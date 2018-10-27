@@ -1,24 +1,16 @@
 package com.simurgh.prayertimes.home.mosque;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cleveroad.fanlayoutmanager.FanLayoutManager;
 import com.cleveroad.fanlayoutmanager.FanLayoutManagerSettings;
-import com.cleveroad.loopbar.widget.OnItemClickListener;
 import com.simurgh.prayertimes.DataMosque;
 import com.simurgh.prayertimes.MosqueActivity;
 import com.simurgh.prayertimes.R;
@@ -26,7 +18,6 @@ import com.simurgh.prayertimes.R;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 

@@ -1,6 +1,5 @@
 package com.simurgh.prayertimes.home.quran
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,14 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.simurgh.prayertimes.R
-import com.simurgh.prayertimes.SurahActivity
 import com.simurgh.prayertimes.extensions.MyExtensions
 import com.simurgh.prayertimes.room.AppDatabase
 import com.simurgh.prayertimes.room.dao.QuranTitleDao
-import io.reactivex.Maybe
-import io.reactivex.MaybeObserver
+import com.simurgh.prayertimes.surah.SurahActivity
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -101,7 +97,7 @@ class QuranFragment: Fragment() {
             holder.titleNo.text = item.titleNo.toString()
 
             holder.itemView.setOnClickListener {
-                val intent = SurahActivity.newIntent(context, item)
+                val intent = SurahActivity.newIntent(context!!, item)
                 startActivity(intent)
             }
 
