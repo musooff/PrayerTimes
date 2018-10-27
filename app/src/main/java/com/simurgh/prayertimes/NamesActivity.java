@@ -186,7 +186,7 @@ public class NamesActivity extends AppCompatActivity {
 
             arabic.setText(category.getNameArabic());
             english.setText(category.getNameArabicTranscripted());
-            //translated.setText(category.getNameEng());
+            //translated.setText(category.getTranslated());
             //id.setText(category.getId()+"");
 
 

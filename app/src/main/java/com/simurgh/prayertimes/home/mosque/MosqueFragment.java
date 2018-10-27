@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes.home;
+package com.simurgh.prayertimes.home.mosque;
 
 import android.animation.Animator;
 import android.content.Context;

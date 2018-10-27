@@ -13,7 +13,8 @@ import android.widget.Toast;
 import com.cleveroad.loopbar.widget.LoopBarView;
 import com.cleveroad.loopbar.widget.OnItemClickListener;
 import com.google.android.material.navigation.NavigationView;
-import com.simurgh.prayertimes.home.MosqueFragment;
+import com.simurgh.prayertimes.home.mosque.MosqueFragment;
+import com.simurgh.prayertimes.home.quran.QuranFragment;
 import com.simurgh.prayertimes.model.CustomViewPager;
 
 import java.text.SimpleDateFormat;

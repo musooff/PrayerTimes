@@ -1,6 +1,7 @@
 package com.simurgh.prayertimes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.simurgh.prayertimes.home.quran.QuranTitle;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -151,6 +154,14 @@ public class SurahActivity extends AppCompatActivity {
         }
     }
 
+    public static Intent newIntent(final Context context, QuranTitle quranTitle) {
+        final Intent intent = new Intent(context, SurahActivity.class);
+        intent.putExtra("id", quranTitle.getTitleNo());
+        intent.putExtra("name", quranTitle.getName());
+        intent.putExtra("eng", quranTitle.getTranscribed());
+        return intent;
+    }
+
     public String readStream(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder stringBuilder = new StringBuilder();
@@ -226,7 +237,7 @@ public class SurahActivity extends AppCompatActivity {
             TextView id = holder.id;
 
             arabic.setText(category.getNameArabic());
-            //english.setText(category.getNameArabicTranscripted());
+            //english.setText(category.getTranscribed());
             translated.setText(category.getNameEng());
             id.setText(category.getId()+"");
 

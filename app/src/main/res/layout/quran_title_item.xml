@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,6 +15,8 @@
             android:id="@+id/tv_id"
             android:textColor="@color/black"
             android:gravity="center"
+            app:fontFamily="sans-serif"
+            android:textStyle="bold"
             android:text="1"/>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -27,14 +29,14 @@
                 android:textColor="@color/black"
                 android:gravity="bottom"
                 android:id="@+id/tv_eng"
-                android:text="Surah Name English"/>
+                android:text="Transcripted"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:textSize="12sp"
                 android:gravity="top"
                 android:id="@+id/tv_tran"
-                android:text="Surah Name Translated"/>
+                android:text="Translated"/>
         </LinearLayout>
 
         <TextView
@@ -44,8 +46,8 @@
             android:text="123"
             android:gravity="right"
             android:textSize="20sp"
-            android:textColor="@color/green"
-            android:layout_marginRight="10dp"
+            android:textColor="@color/greenMain"
+            android:layout_marginRight="16dp"
             />
     </LinearLayout>
     <View

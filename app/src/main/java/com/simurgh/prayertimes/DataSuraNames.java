@@ -5,30 +5,30 @@ package com.simurgh.prayertimes;
  */
 
 public class DataSuraNames {
-    private String nameArabic;
-    private String nameArabicTranscripted;
-    private String nameEng;
-    private int id;
-    public DataSuraNames(String nameArabic,String nameArabicTranscripted, String nameEng, int id){
-        this.nameArabic = nameArabic;
-        this.nameArabicTranscripted = nameArabicTranscripted;
-        this.nameEng = nameEng;
-        this.id = id;
+    private String name;
+    private String transcribed;
+    private String translated;
+    private int titleNo;
+    public DataSuraNames(String name, String transcribed, String translated, int titleNo){
+        this.name = name;
+        this.transcribed = transcribed;
+        this.translated = translated;
+        this.titleNo = titleNo;
     }
 
-    public String getNameArabic() {
-        return nameArabic;
+    public String getName() {
+        return name;
     }
 
-    public String getNameArabicTranscripted() {
-        return nameArabicTranscripted;
+    public String getTranscribed() {
+        return transcribed;
     }
 
-    public String getNameEng() {
-        return nameEng;
+    public String getTranslated() {
+        return translated;
     }
 
-    public int getId() {
-        return id;
+    public int getTitleNo() {
+        return titleNo;
     }
 }

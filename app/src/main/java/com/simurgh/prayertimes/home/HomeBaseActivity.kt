@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.simurgh.prayertimes.*
+import com.simurgh.prayertimes.home.mosque.MosqueFragment
+import com.simurgh.prayertimes.home.quran.QuranFragment
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.footer.*
 
@@ -48,11 +50,11 @@ open class HomeBaseActivity: FragmentActivity() {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 ->  TodayFragment()
-                1 ->  PrayersFragment()
-                2 ->  QuranFragment()
+                0 -> TodayFragment()
+                1 -> PrayersFragment()
+                2 -> QuranFragment()
                 3 -> MosqueFragment()
-                4 ->  MoreFragment()
+                4 -> MoreFragment()
                 else -> {TodayFragment()
                 }
             }
