@@ -22,6 +22,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.simurgh.prayertimes.names.NamesActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,8 +47,6 @@ import java.util.Random;
 
 import androidx.fragment.app.Fragment;
 
-import static android.R.attr.category;
-import static android.R.attr.dial;
 import static android.app.Activity.RESULT_OK;
 
 /**

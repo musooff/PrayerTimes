@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes;
+package com.simurgh.prayertimes.mosque;
 
 /**
  * Created by moshe on 18/04/2017.

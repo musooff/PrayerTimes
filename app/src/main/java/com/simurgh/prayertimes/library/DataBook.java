@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes;
+package com.simurgh.prayertimes.library;
 
 import android.content.Intent;
 

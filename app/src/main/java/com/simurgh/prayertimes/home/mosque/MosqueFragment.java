@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.cleveroad.fanlayoutmanager.FanLayoutManager;
 import com.cleveroad.fanlayoutmanager.FanLayoutManagerSettings;
-import com.simurgh.prayertimes.DataMosque;
-import com.simurgh.prayertimes.MosqueActivity;
+import com.simurgh.prayertimes.mosque.DataMosque;
+import com.simurgh.prayertimes.mosque.MosqueActivity;
 import com.simurgh.prayertimes.R;
 
 import java.util.ArrayList;

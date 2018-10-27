@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity
                     return new MosqueFragment();
 
                 case 4:
-                    return new LibraryFragment();
+                    return new MosqueFragment();
 
                 case 5:
                     return new MoreFragment();

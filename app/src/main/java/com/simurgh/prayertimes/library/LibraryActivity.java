@@ -1,14 +1,19 @@
-package com.simurgh.prayertimes;
+package com.simurgh.prayertimes.library;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,15 +23,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.simurgh.prayertimes.R;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,36 +38,32 @@ import androidx.recyclerview.widget.RecyclerView;
  * Created by moshe on 27/06/2017.
  */
 
-public class LibraryFragment extends Fragment {
+public class LibraryActivity extends Activity {
 
-    ArrayList<DataBook> dataBooks;
+    private DataBook requestedDataBook;
 
-    RecyclerView mRecyclerView;
+    private SharedPreferences.Editor editor;
+    private DataBookAdapter mAdapter;
 
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-
-    int id;
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_library,container,false);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.content_library);
 
+        RecyclerView mRecyclerView = findViewById(R.id.rv_books);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_books);
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),2);
 
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        dataBooks = new ArrayList<>();
+        ArrayList<DataBook> dataBooks = new ArrayList<>();
 
-        sharedPreferences = getActivity().getSharedPreferences("PrayerData",0);
+        SharedPreferences sharedPreferences = getApplication().getSharedPreferences("PrayerData", 0);
         editor = sharedPreferences.edit();
         editor.apply();
-        DataBookAdapter mAdapter = new DataBookAdapter(getContext(),dataBooks);
+
+        mAdapter = new DataBookAdapter(getApplicationContext(), dataBooks);
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -111,21 +111,64 @@ public class LibraryFragment extends Fragment {
                 sharedPreferences.getBoolean("book6_chihil.pdf",false)));
 
         mAdapter.notifyDataSetChanged();
+    }
 
-        return view;
+    public void animate(ImageView imageView, boolean value){
+        if (value) {
+            RotateAnimation rotate = new RotateAnimation(0, 180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            rotate.setDuration(5000);
+            rotate.setInterpolator(new LinearInterpolator());
+            imageView.startAnimation(rotate);
+        }
+        else {
+            imageView.clearAnimation();
+        }
+    }
+
+    private void downloadBook(final DataBook category){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference book = storageRef.child("islamicBooks/"+category.getEngName());
+
+
+        File storagePath = new File(Environment.getExternalStorageDirectory(), "PrayerTimesBooks");
+        if(!storagePath.exists()) {
+            storagePath.mkdirs();
+        }
+        final File localFile = new File(storagePath,category.getName()+".pdf");
+
+
+        book.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                category.setDownloaded(true);
+                editor.putBoolean(category.getEngName(),true);
+                editor.apply();
+                mAdapter.notifyDataSetChanged();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("Storage Failure", exception.getMessage());
+            }
+        });
 
     }
 
-    private void setBookDownloads() {
-        editor.putBoolean("book1_zindaginoma.pdf",true);
-        editor.putBoolean("book2_vasiyatho.pdf",false);
-        editor.putBoolean("book3_musnad.pdf",false);
-        editor.putBoolean("book4_duo.pdf",true);
-        editor.putBoolean("book5_savol.pdf",false);
-        editor.putBoolean("book6_chihil.pdf",true);
-        editor.apply();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 11235: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    downloadBook(requestedDataBook);
+                } else {
+                    Toast.makeText(getApplicationContext(),"Лутфан барои боргирии китобхо ба мо ичоза дихед.",Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
-
 
     public class DataBookAdapter extends
             RecyclerView.Adapter<DataBookAdapter.ViewHolder> {
@@ -139,9 +182,6 @@ public class LibraryFragment extends Fragment {
             mContext = context;
         }
 
-
-
-        // Easy access to the context object in the recyclerview
         private Context getContext() {
             return mContext;
         }
@@ -151,100 +191,41 @@ public class LibraryFragment extends Fragment {
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
 
-            // Inflate the custom layout
             View categoryView = inflater.inflate(R.layout.single_book, parent, false);
-
-            // Return a new holder instance
-            ViewHolder viewHolder = new ViewHolder(categoryView);
-            return viewHolder;
+            return new ViewHolder(categoryView);
         }
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
-            // Get the data model based on position
             final DataBook category = mCategory.get(position);
-
-            /*
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-
-
-                @Override
-                public void onClick(View v) {
-                    // open the book
-
-                    *
-                    Intent bookReader = new Intent(getActivity(),BookActivity.class);
-                bookReader.putExtra("book",1);
-                startActivity(bookReader);
-
-                }
-            });
-
-    */
-            // Set item views based on your views and data model
             TextView name = holder.name;
             ImageView imageView = holder.imageView;
             final ImageView download =holder.download;
 
             name.setText(category.getName());
             if (category.isDownloaded()){
-                download.setImageResource(R.drawable.ic_downloaded_blue);
+                download.setImageResource(R.drawable.ic_downloaded);
             }
             else {
-                download.setImageResource(R.drawable.ic_download_grey);
+                download.setImageResource(R.drawable.ic_not_download);
 
             }
             download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!category.isDownloaded()){
-                        // request permission
-                        // Here, thisActivity is the current activity
-                        if (ActivityCompat.checkSelfPermission(getContext(),
-                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                != PackageManager.PERMISSION_GRANTED) {
-
-                            ActivityCompat.requestPermissions(getActivity(),
-                                    new String[]{
-                                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    11235);
+                        download.setImageResource(R.drawable.ic_downloading);
+                        animate(download, true);
+                        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            requestedDataBook = category;
+                            ActivityCompat.requestPermissions(LibraryActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 11235);
                         }
 
-
-                        // download here
-                        FirebaseStorage storage = FirebaseStorage.getInstance();
-                        StorageReference storageRef = storage.getReference();
-                        StorageReference book = storageRef.child("islamicBooks/"+category.getEngName());
-
-
-                        File storagePath = new File(Environment.getExternalStorageDirectory(), "PrayerTimesBooks");
-                        // Create direcorty if not exists
-                        if(!storagePath.exists()) {
-                            storagePath.mkdirs();
+                        else {
+                            downloadBook(category);
                         }
-                        final File localFile = new File(storagePath,category.getName()+".pdf");
-
-
-                        book.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                //Toast.makeText(getContext(),localFile.getName(),Toast.LENGTH_SHORT).show();
-                                download.setImageResource(R.drawable.ic_downloaded_blue);
-                                category.setDownloaded(true);
-                                editor.putBoolean(category.getEngName(),true);
-                                editor.apply();
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                // Handle any errors
-                            }
-                        });
-
                     }
                     else {
-                        // prompt user to remove and remove
                         Toast.makeText(getContext(),"Шумо китобро боргири кардагиед.",Toast.LENGTH_SHORT).show();
 
                     }
@@ -256,7 +237,7 @@ public class LibraryFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (category.isDownloaded()){
-                        Intent bookReader = new Intent(getActivity(),BookActivity.class);
+                        Intent bookReader = new Intent(getContext(),BookActivity.class);
                         bookReader.putExtra("book",category.getName());
                         startActivity(bookReader);
                     }
@@ -266,8 +247,6 @@ public class LibraryFragment extends Fragment {
                 }
             });
 
-
-
         }
 
         @Override
@@ -275,25 +254,17 @@ public class LibraryFragment extends Fragment {
             return mCategory.size();
         }
 
-        // Provide a direct reference to each of the views within a data item
-        // Used to cache the views within the item layout for fast access
         public class ViewHolder extends RecyclerView.ViewHolder{
-            // Your holder should contain a member variable
-            // for any view that will be set as you render a row
             private TextView name;
             private ImageView download;
             private ImageView imageView;
 
-            // We also create a constructor that accepts the entire item row
-            // and does the view lookups to find each subview
             public ViewHolder(View itemView) {
-                // Stores the itemView in a public final member variable that can be used
-                // to access the context from any ViewHolder instance.
                 super(itemView);
 
-                name = (TextView) itemView.findViewById(R.id.tv_name);
-                download = (ImageView) itemView.findViewById(R.id.iv_download);
-                imageView = (ImageView) itemView.findViewById(R.id.iv_image);
+                name = itemView.findViewById(R.id.tv_name);
+                download = itemView.findViewById(R.id.iv_download);
+                imageView = itemView.findViewById(R.id.iv_image);
             }
 
         }

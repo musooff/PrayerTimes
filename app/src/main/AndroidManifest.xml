@@ -18,11 +18,7 @@
         android:name="androidx.multidex.MultiDexApplication"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".home.HomeBaseActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
@@ -32,14 +28,21 @@
         </activity>
         <activity android:name=".surah.SurahActivity"/>
         <activity android:name=".SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".mosque.MosqueActivity" />
+        <activity android:name=".library.BookActivity" />
+        <activity android:name=".library.LibraryActivity">
 
         </activity>
-        <activity android:name=".MosqueActivity" ></activity>
-        <activity android:name=".BookActivity"></activity>
 
         <receiver android:name=".NotificationService"/>
 
-        <activity android:name=".NamesActivity"/>
+        <activity android:name=".names.NamesActivity"/>
         <activity android:name=".DisclaimerActivity"/>
         <activity android:name=".HelpActivity"/>
         <activity android:name=".SettingsActivity"/>

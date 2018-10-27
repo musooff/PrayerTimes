@@ -1,11 +1,11 @@
-package com.simurgh.prayertimes;
+package com.simurgh.prayertimes.library;
 
-import android.graphics.pdf.PdfRenderer;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Bundle;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.simurgh.prayertimes.R;
 
 import java.io.File;
 
@@ -20,10 +20,6 @@ public class BookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
-
-
-        // create a new renderer
-
         Bundle extras = getIntent().getExtras();
         String bookName = extras.getString("book");
 
@@ -33,7 +29,7 @@ public class BookActivity extends AppCompatActivity {
         final File localFile = new File(storagePath,bookName+".pdf");
 
 
-        PDFView pdfView = (PDFView)findViewById(R.id.pdfView);
+        PDFView pdfView = findViewById(R.id.pdfView);
         pdfView.fromFile(localFile)
                 .enableSwipe(true) // allows to block changing pages using swipe
                 .swipeHorizontal(true)
