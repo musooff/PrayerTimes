@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes;
+package com.simurgh.prayertimes.model;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -9,27 +9,26 @@
     tools:context="com.simurgh.prayertimes.MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:background="@color/greyLight">
-    <com.simurgh.prayertimes.CustomViewPager
+    <com.simurgh.prayertimes.model.CustomViewPager
         android:id="@+id/pager"
         android:layout_above="@+id/endlessView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.simurgh.prayertimes.CustomViewPager>
+    </com.simurgh.prayertimes.model.CustomViewPager>
     <com.cleveroad.loopbar.widget.LoopBarView
         android:layout_alignParentBottom="true"
         android:id="@+id/endlessView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:enls_placeholderId="@+id/placeHolderID"
+        android:layout_height="64dp"
         app:enls_orientation="horizontal"
         app:enls_selectionGravity="start"
-        app:enls_selectionMargin="10dp"
-        app:enls_overlaySize="5dp"
+        app:enls_selectionMargin="5dp"
+        app:enls_overlaySize="2dp"
         app:enls_selectionInAnimation="@animator/enls_scale_restore"
         app:enls_selectionOutAnimation="@animator/enls_scale_small"
-        app:enls_selectionBackground="@android:color/holo_blue_dark"
-        app:enls_scrollMode="auto"
+        app:enls_selectionBackground="@color/greenMain"
+        app:enls_scrollMode="finite"
         app:enls_menu="@menu/activity_main_drawer"
         />
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes;
+package com.simurgh.prayertimes.home;
 
 import android.animation.Animator;
 import android.content.Context;
@@ -19,9 +19,13 @@ import android.widget.Toast;
 import com.cleveroad.fanlayoutmanager.FanLayoutManager;
 import com.cleveroad.fanlayoutmanager.FanLayoutManagerSettings;
 import com.cleveroad.loopbar.widget.OnItemClickListener;
+import com.simurgh.prayertimes.DataMosque;
+import com.simurgh.prayertimes.MosqueActivity;
+import com.simurgh.prayertimes.R;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,16 +36,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MosqueFragment extends Fragment {
 
-    FanLayoutManager fanLayoutManager;
-    ArrayList<DataMosque> dataMosques;
-
-    RecyclerView mRecyclerView;
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_mosques,container,false);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_mosques);
+        RecyclerView mRecyclerView = view.findViewById(R.id.rv_mosques);
+
 
 
         FanLayoutManagerSettings fanLayoutManagerSettings = FanLayoutManagerSettings
@@ -51,14 +51,14 @@ public class MosqueFragment extends Fragment {
                 .withViewWidthDp(200)
                 .withViewHeightDp(400)
                 .build();
-        fanLayoutManager = new FanLayoutManager(getContext(),fanLayoutManagerSettings);
+        FanLayoutManager fanLayoutManager = new FanLayoutManager(getContext(), fanLayoutManagerSettings);
 
 
         mRecyclerView.setLayoutManager(fanLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        dataMosques = new ArrayList<>();
-        DataMosqueAdapter mAdapter = new DataMosqueAdapter(getContext(),dataMosques);
+        ArrayList<DataMosque> dataMosques = new ArrayList<>();
+        DataMosqueAdapter mAdapter = new DataMosqueAdapter(dataMosques);
         mRecyclerView.setAdapter(mAdapter);
 
         dataMosques.add(new DataMosque("Масҷиди ҷомеи марказии ш. Душанбе ба номи Ҳоҷӣ Яъқуб", "ш. Душанбе, кӯч.Шодмонӣ, 58 Телефон :+(992 37) 224-25-11",R.drawable.mj_markazi,R.string.mj_markazi));
@@ -74,124 +74,47 @@ public class MosqueFragment extends Fragment {
 
         mAdapter.notifyDataSetChanged();
 
-        //fanLayoutManager.collapseViews();
-
         return view;
 
     }
 
-    public static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-        private String[] mDataset;
-
-        // Provide a reference to the views for each data item
-        // Complex data items may need more than one view per item, and
-        // you provide access to all the views for a data item in a view holder
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-            // each data item is just a string in this case
-            public LinearLayout mLinearLayout;
-            public ViewHolder(LinearLayout v) {
-                super(v);
-                mLinearLayout = v;
-            }
-        }
-
-        // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(String[] myDataset) {
-            mDataset = myDataset;
-        }
-
-        // Create new views (invoked by the layout manager)
-        @Override
-        public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                       int viewType) {
-            // create a new view
-            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.single_mosque, parent, false);
-            // set the view's size, margins, paddings and layout parameters
-            ViewHolder vh = new ViewHolder(v);
-            return vh;
-        }
-
-        // Replace the contents of a view (invoked by the layout manager)
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            // - get element from your dataset at this position
-            // - replace the contents of the view with that element
-            //holder.mLinearLayout.setText(mDataset[position]);
-
-        }
-
-        // Return the size of your dataset (invoked by the layout manager)
-        @Override
-        public int getItemCount() {
-            return mDataset.length;
-        }
-    }
 
 
-
-    public class DataMosqueAdapter extends
-            RecyclerView.Adapter<DataMosqueAdapter.ViewHolder> {
+    public class DataMosqueAdapter extends RecyclerView.Adapter<DataMosqueAdapter.ViewHolder> {
 
         private ArrayList<DataMosque> mCategory;
-        private Context mContext;
 
-
-        public DataMosqueAdapter(Context context, ArrayList<DataMosque> category) {
+        DataMosqueAdapter(ArrayList<DataMosque> category) {
             mCategory = category;
-            mContext = context;
-        }
-
-
-
-        // Easy access to the context object in the recyclerview
-        private Context getContext() {
-            return mContext;
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
-
-            // Inflate the custom layout
             View categoryView = inflater.inflate(R.layout.single_mosque, parent, false);
-
-            // Return a new holder instance
-            ViewHolder viewHolder = new ViewHolder(categoryView);
-            return viewHolder;
+            return new ViewHolder(categoryView);
         }
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
-            // Get the data model based on position
             final DataMosque category = mCategory.get(position);
-
             holder.itemView.setOnClickListener(new View.OnClickListener() {
-
-
                 @Override
                 public void onClick(View v) {
                     Intent mosque = new Intent(getActivity(),MosqueActivity.class);
                     mosque.putExtra("name",category.getName());
-                    mosque.putExtra("address",category.getAddress());
                     mosque.putExtra("info",category.getInfo());
                     mosque.putExtra("image",category.getImage());
-
+                    mosque.putExtra("address", category.getAddress());
                     startActivity(mosque);
                 }
             });
 
-            // Set item views based on your views and data model
             ImageView imageView = holder.imageView;
             TextView name = holder.name;
-            TextView address =holder.address;
-
             name.setText(category.getName());
-            //address.setText(category.getAddress());
             imageView.setImageResource(category.getImage());
-
-
 
 
         }
@@ -201,25 +124,14 @@ public class MosqueFragment extends Fragment {
             return mCategory.size();
         }
 
-        // Provide a direct reference to each of the views within a data item
-        // Used to cache the views within the item layout for fast access
-        public class ViewHolder extends RecyclerView.ViewHolder{
-            // Your holder should contain a member variable
-            // for any view that will be set as you render a row
+        class ViewHolder extends RecyclerView.ViewHolder{
             private ImageView imageView;
             private TextView name;
-            private TextView address;
 
-            // We also create a constructor that accepts the entire item row
-            // and does the view lookups to find each subview
-            public ViewHolder(View itemView) {
-                // Stores the itemView in a public final member variable that can be used
-                // to access the context from any ViewHolder instance.
+            ViewHolder(View itemView) {
                 super(itemView);
-
-                imageView = (ImageView)itemView.findViewById(R.id.iv_mosque);
-                name = (TextView)itemView.findViewById(R.id.tv_name);
-                address = (TextView)itemView.findViewById(R.id.tv_address);
+                imageView = itemView.findViewById(R.id.iv_mosque);
+                name = itemView.findViewById(R.id.tv_name);
             }
 
         }
