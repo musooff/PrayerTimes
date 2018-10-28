@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes;
+package com.simurgh.prayertimes.more;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.simurgh.prayertimes.more.DisclaimerActivity;
+import com.simurgh.prayertimes.R;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -18,22 +17,21 @@ import androidx.fragment.app.Fragment;
  */
 
 public class MoreFragment extends Fragment {
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_more,container,false);
 
         LinearLayout ll_zakat,ll_qibla,ll_calendar,ll_tasbeh,ll_else,ll_settings,ll_help,ll_disclaimer;
 
-        ll_zakat = (LinearLayout)view.findViewById(R.id.ll_zakat);
-        ll_qibla = (LinearLayout)view.findViewById(R.id.ll_qibla);
-        ll_calendar = (LinearLayout)view.findViewById(R.id.ll_calendar);
-        ll_tasbeh = (LinearLayout)view.findViewById(R.id.ll_tasbih);
-        ll_else = (LinearLayout)view.findViewById(R.id.ll_andmore);
+        ll_zakat = view.findViewById(R.id.ll_zakat);
+        ll_qibla = view.findViewById(R.id.ll_qibla);
+        ll_calendar = view.findViewById(R.id.ll_calendar);
+        ll_tasbeh = view.findViewById(R.id.ll_tasbih);
+        ll_else = view.findViewById(R.id.ll_andmore);
 
-        ll_settings = (LinearLayout)view.findViewById(R.id.ll_settings);
-        ll_help = (LinearLayout)view.findViewById(R.id.ll_help);
-        ll_disclaimer = (LinearLayout)view.findViewById(R.id.ll_disclaimer);
+        ll_settings = view.findViewById(R.id.ll_settings);
+        ll_help = view.findViewById(R.id.ll_help);
+        ll_disclaimer = view.findViewById(R.id.ll_disclaimer);
 
 
         // Under construction

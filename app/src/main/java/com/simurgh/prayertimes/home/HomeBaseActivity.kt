@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.footer.*
 import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
+import com.simurgh.prayertimes.more.MoreFragment
 import java.io.IOException
 import java.util.*
 
@@ -91,12 +91,12 @@ open class HomeBaseActivity: FragmentActivity() {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> MosqueFragment()
+                0 -> TodayFragment()
                 1 -> TimesFragment()
                 2 -> QuranFragment()
                 3 -> MosqueFragment()
                 4 -> MoreFragment()
-                else -> {MosqueFragment()
+                else -> {TodayFragment()
                 }
             }
         }
