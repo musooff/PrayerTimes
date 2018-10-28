@@ -295,4 +295,11 @@
     <string name="title_quran">Куръони Карим</string>
     <string name="title_names">Номхои Худованд</string>
     <string name="title_library">Китобхона</string>
+    <string name="title_times">Вактхои Имруза</string>
+    <string name="time_name_1">Бомдод</string>
+    <string name="time_name_2">Тулӯъ</string>
+    <string name="time_name_3">Пешин</string>
+    <string name="time_name_4">Аср</string>
+    <string name="time_name_5">Шом</string>
+    <string name="time_name_6">Хуфтан</string>
 </resources>

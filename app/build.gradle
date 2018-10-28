@@ -63,6 +63,8 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.2.71"
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
 
 }
 apply plugin: 'com.google.gms.google-services'
