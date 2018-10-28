@@ -51,9 +51,9 @@ class SurahActivity: Activity() {
 
         fun newIntent(context: Context, quranTitle: QuranTitle): Intent {
             val intent = Intent(context, SurahActivity::class.java)
-            intent.putExtra(TITLE_NO, quranTitle.titleNo)
+            intent.putExtra(TITLE_NO, quranTitle.number)
             intent.putExtra(NAME, quranTitle.name)
-            intent.putExtra(TRANSCRIBED, quranTitle.transcribed)
+            intent.putExtra(TRANSCRIBED, quranTitle.englishName)
             return intent
         }
     }
@@ -128,9 +128,9 @@ class SurahActivity: Activity() {
 
         override fun onBindViewHolder(holder: SurahViewHolder, position: Int) {
             var verse = verses[position]
-            holder.arabic.text = verse.arabic
+            holder.arabic.text = verse.text
             holder.translated.text = verse.tajik
-            holder.id.text = verse.verseNo.toString()
+            holder.id.text = verse.number.toString()
         }
 
     }

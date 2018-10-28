@@ -45,7 +45,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:16.0.4'
     implementation 'com.cleveroad:fan-layout-manager:1.0.4'
     testImplementation 'junit:junit:4.12'
-    implementation 'com.github.barteksc:android-pdf-viewer:2.7.0-beta'
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
     implementation 'com.cleveroad:slidingtutorial:1.0.8'
     implementation 'androidx.multidex:multidex:2.0.0'

@@ -25,8 +25,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="النور"
-                    android:textColor="@color/green"
+                    android:textColor="@color/greenMain"
                     android:textSize="25sp"
+                    android:textStyle="bold"
                     android:gravity="center"
                     android:id="@+id/tv_arabic"/>
             </RelativeLayout>
@@ -35,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Ан-Нур"
+                android:textStyle="bold"
                 android:textColor="@color/black"
                 android:id="@+id/tv_tajik"/>
             <LinearLayout

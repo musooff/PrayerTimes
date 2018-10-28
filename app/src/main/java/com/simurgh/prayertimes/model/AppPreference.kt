@@ -38,7 +38,6 @@ class AppPreference() {
 
     fun getToday(): Date{
         val timestamp = Timestamp(System.currentTimeMillis())
-        val sharedCalFormat = SimpleDateFormat("MMyyyy", Locale.US)
         return Date(timestamp.time)
     }
 
@@ -80,6 +79,11 @@ class AppPreference() {
         cal.time = date
         cal.add(Calendar.DATE, days)
         return cal.time
+    }
+
+    fun getFormattedNow(date: Date): String{
+        val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return simpleDateFormat.format(date)
     }
 
 }

@@ -2,12 +2,9 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.simurgh.prayertimes.MainActivity"
-    android:background="@color/greyLight">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -39,17 +36,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_above="@+id/tv_next_prayer_name"
-                        android:id="@+id/tv_next_prayer_time"
-                        android:text="3:23"
-                        android:textSize="30sp"
-                        android:textColor="@color/white"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:id="@+id/tv_next_prayer_name"
+                        android:id="@+id/tv_prayer_name"
                         android:layout_centerVertical="true"
+                        android:textStyle="bold"
                         android:text="Бомдод"
                         android:textSize="80sp"
                         android:textColor="@color/white"/>
@@ -57,35 +46,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_below="@id/tv_next_prayer_time"
+                        android:layout_below="@id/tv_prayer_name"
                         android:id="@+id/tv_next_prayer_remaining"
-                        android:text="@string/home_now"
+                        android:layout_marginTop="-8dp"
                         android:textSize="18sp"
                         android:visibility="visible"
                         android:textColor="@color/white"/>
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/iv_notification"
-                        android:layout_alignBottom="@+id/tv_next_prayer_time"
-                        android:layout_toRightOf="@+id/tv_next_prayer_time"
-                        android:src="@drawable/ic_notification_white"
-                        android:layout_marginLeft="10dp"
-                        android:visibility="invisible"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tv_location"
-                        android:text="Дар Душанбе, кучаи Фирдавси"
-                        android:textColor="@color/white"
-                        android:gravity="bottom"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginLeft="16dp"
-                        android:textSize="12sp"
-                        android:drawableLeft="@drawable/ic_location_white"
-                        android:drawablePadding="5dp"
-                        android:clickable="true"/>
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -94,6 +60,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/cv_verse"
                 android:layout_below="@+id/cv_time"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp">
@@ -153,6 +121,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/cv_hadis"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
                 android:layout_below="@+id/cv_verse"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
@@ -214,6 +184,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/cv_dua"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
                 android:layout_below="@+id/cv_hadis"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
@@ -259,6 +231,7 @@
 
                         android:textColor="@color/black"
                         android:textSize="15sp"
+                        android:textStyle="bold"
                         android:id="@+id/tv_dua_arabic"
                         android:text="But sects from among themselves fell into disagreement: then woe to the wrong-doers, from Penalty of a Grievous Day!"/>
 
@@ -299,6 +272,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/cv_name"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
                 android:layout_below="@+id/cv_dua"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
@@ -378,8 +353,137 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/cv_share"
+                android:id="@+id/cv_lib"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
                 android:layout_below="@+id/cv_name"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_library_pressed" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="10dp">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Китобхона"
+                                android:textSize="15sp"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Барои мутолиа"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="10dp">
+                        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp">
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="150dp"
+                                android:layout_height="250dp">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
+                                    <ImageView
+                                        android:layout_width="150dp"
+                                        android:layout_height="200dp"
+                                        android:src="@drawable/book_1"
+                                        android:scaleType="fitXY"/>
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:text="Зиндагиномаи Паёмбар"
+                                        android:maxLines="2"
+                                        android:textColor="@color/black"
+                                        android:layout_marginTop="5dp"
+                                        android:textStyle="bold"
+                                        android:id="@+id/tv_name_1"
+                                        android:ellipsize="end" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+                        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp">
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="150dp"
+                                android:layout_height="250dp">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
+                                    <ImageView
+                                        android:layout_width="150dp"
+                                        android:layout_height="200dp"
+                                        android:src="@drawable/book_2"
+                                        android:scaleType="fitXY"/>
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:text="Маҷмуъаи васиятҳои Имоми Аъзам"
+                                        android:maxLines="2"
+                                        android:textColor="@color/black"
+                                        android:layout_marginTop="5dp"
+                                        android:textStyle="bold"
+                                        android:id="@+id/tv_name_2"
+                                        android:ellipsize="end" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_lib"
+                        android:text="Ҳамаро боз кунед"
+                        android:gravity="right"
+                        android:textColor="@color/colorPrimary"
+                        android:clickable="true"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cv_share"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
+                android:layout_below="@+id/cv_lib"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp">
@@ -438,6 +542,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/cv_more"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
                 android:layout_below="@+id/cv_share"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"

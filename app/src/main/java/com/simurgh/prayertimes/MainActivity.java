@@ -17,8 +17,8 @@ import com.simurgh.prayertimes.home.mosque.MosqueFragment;
 import com.simurgh.prayertimes.home.quran.QuranFragment;
 import com.simurgh.prayertimes.home.times.TimesFragment;
 import com.simurgh.prayertimes.model.CustomViewPager;
-import com.simurgh.prayertimes.more.DisclaimerActivity;
-import com.simurgh.prayertimes.more.MoreFragment;
+import com.simurgh.prayertimes.home.more.DisclaimerActivity;
+import com.simurgh.prayertimes.home.more.MoreFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

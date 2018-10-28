@@ -8,13 +8,10 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.simurgh.prayertimes.R;
 
 import java.io.File;
-
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class BookActivity extends AppCompatActivity {
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

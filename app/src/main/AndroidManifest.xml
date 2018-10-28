@@ -42,9 +42,9 @@
         <receiver android:name=".NotificationService"/>
 
         <activity android:name=".names.NamesActivity"/>
-        <activity android:name=".more.DisclaimerActivity"/>
-        <activity android:name=".more.HelpActivity"/>
-        <activity android:name=".more.SettingsActivity"/>
+        <activity android:name=".home.more.DisclaimerActivity"/>
+        <activity android:name=".home.more.HelpActivity"/>
+        <activity android:name=".home.more.SettingsActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

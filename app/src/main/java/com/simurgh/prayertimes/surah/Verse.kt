@@ -1,18 +1,39 @@
 package com.simurgh.prayertimes.surah
 
 import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Relation
+import com.simurgh.prayertimes.home.quran.QuranTitle
 
-@Entity(primaryKeys = ["titleNo", "verseNo"])
-class Verse() {
+@Entity(primaryKeys = ["number", "titleNo"])
+open class Verse() {
+    var number: Int = 0
     var titleNo: Int = 0
-    var verseNo: Int = 0
-    var arabic: String? = null
+    var text: String? = null
     var tajik: String? = null
 
-    constructor(titleNo: Int,  verseNo: Int, arabic: String, tajik: String): this(){
+    @Ignore
+    var surah: Surah? = null
+    @Ignore
+    var numberInSurah: Int = 0
+
+    constructor(titleNo: Int,  number: Int, arabic: String, tajik: String): this(){
+        this.number = number
         this.titleNo = titleNo
-        this.verseNo = verseNo
-        this.arabic = arabic
+        this.text = arabic
         this.tajik = tajik
     }
+}
+
+class Surah{
+    var number: Int = 0
+}
+
+class DayVerse: Verse(){
+    @Relation(parentColumn = "titleNo", entityColumn = "number")
+    var quranTitles: List<QuranTitle> = ArrayList()
+}
+
+class VerseResult{
+    var data: List<Verse> = ArrayList()
 }

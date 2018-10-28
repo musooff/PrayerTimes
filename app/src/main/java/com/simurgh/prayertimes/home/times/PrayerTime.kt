@@ -9,7 +9,7 @@ class SingleTime {
     var Fajr:String? = null
         set(value) {
             field = if (value!!.contains('(')){
-                value.substring(0, value.indexOf('('))
+                value.substring(0, value.indexOf('(') - 1)
             } else{
                 value
             }
@@ -17,7 +17,7 @@ class SingleTime {
     var Sunrise: String? = null
         set(value) {
             field = if (value!!.contains('(')){
-                value.substring(0, value.indexOf('('))
+                value.substring(0, value.indexOf('(') - 1)
             } else{
                 value
             }
@@ -25,7 +25,7 @@ class SingleTime {
     var Dhuhr: String? = null
         set(value) {
             field = if (value!!.contains('(')){
-                value.substring(0, value.indexOf('('))
+                value.substring(0, value.indexOf('(') - 1)
             } else{
                 value
             }
@@ -33,7 +33,7 @@ class SingleTime {
     var Asr: String? = null
         set(value) {
             field = if (value!!.contains('(')){
-                value.substring(0, value.indexOf('('))
+                value.substring(0, value.indexOf('(') - 1)
             } else{
                 value
             }
@@ -41,7 +41,7 @@ class SingleTime {
     var Maghrib: String? = null
         set(value) {
             field = if (value!!.contains('(')){
-                value.substring(0, value.indexOf('('))
+                value.substring(0, value.indexOf('(') - 1)
             } else{
                 value
             }
@@ -49,7 +49,7 @@ class SingleTime {
     var Isha: String? = null
         set(value) {
             field = if (value!!.contains('(')){
-                value.substring(0, value.indexOf('('))
+                value.substring(0, value.indexOf('(') - 1)
             } else{
                 value
             }
@@ -57,7 +57,7 @@ class SingleTime {
     var Midnight:String? = null
         set(value) {
             field = if (value!!.contains('(')){
-                value.substring(0, value.indexOf('('))
+                value.substring(0, value.indexOf('(') - 1)
             } else{
                 value
             }

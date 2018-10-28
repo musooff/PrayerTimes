@@ -92,9 +92,9 @@ class QuranFragment: Fragment() {
         override fun onBindViewHolder(holder: QuranTitleViewHolder, position: Int) {
             val item = quranTitles[position]
             holder.name.text = item.name
-            holder.transcribed.text = item.transcribed
-            holder.translated.text = item.translated
-            holder.titleNo.text = item.titleNo.toString()
+            holder.transcribed.text = item.englishName
+            holder.translated.text = item.englishNameTranslation
+            holder.titleNo.text = item.number.toString()
 
             holder.itemView.setOnClickListener {
                 val intent = SurahActivity.newIntent(context!!, item)

@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes.more;
+package com.simurgh.prayertimes.home.more;
 
 import android.os.Bundle;
 

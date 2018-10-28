@@ -6,15 +6,15 @@ import androidx.room.PrimaryKey
 @Entity
 class QuranTitle() {
     @PrimaryKey
-    var titleNo: Int = 0
+    var number: Int = 0
     var name: String? = null
-    var transcribed: String? = null
-    var translated: String? = null
+    var englishName: String? = null
+    var englishNameTranslation: String? = null
 
     constructor(titleNo: Int, name: String, transcribed: String, translated: String): this(){
-        this.titleNo = titleNo
+        this.number = titleNo
         this.name = name
-        this.transcribed = transcribed
-        this.translated = translated
+        this.englishName = transcribed
+        this.englishNameTranslation = translated
     }
 }

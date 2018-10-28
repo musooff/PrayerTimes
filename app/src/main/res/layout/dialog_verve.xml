@@ -13,6 +13,7 @@
             android:layout_height="wrap_content"
             android:text="Surai Hajj"
             android:id="@+id/tv_tajName"
+            android:textStyle="bold"
             android:textColor="@color/black"
             android:textSize="20sp"/>
         <TextView
@@ -25,9 +26,10 @@
             android:layout_height="wrap_content"
             android:text="Arabic"
             android:id="@+id/tv_araName"
+            android:textStyle="bold"
 
             android:layout_alignParentRight="true"
-            android:textColor="@color/green"
+            android:textColor="@color/greenMain"
             android:textSize="20sp"/>
     </RelativeLayout>
 

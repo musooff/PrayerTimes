@@ -45,8 +45,6 @@ public class NamesActivity extends Activity {
 
     DataNames requestedDataName;
 
-    int id;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -198,10 +196,6 @@ public class NamesActivity extends Activity {
 
                 }
             });
-
-
-
-
         }
 
         @Override
