@@ -15,7 +15,9 @@ import com.cleveroad.loopbar.widget.OnItemClickListener;
 import com.google.android.material.navigation.NavigationView;
 import com.simurgh.prayertimes.home.mosque.MosqueFragment;
 import com.simurgh.prayertimes.home.quran.QuranFragment;
+import com.simurgh.prayertimes.home.times.TimesFragment;
 import com.simurgh.prayertimes.model.CustomViewPager;
+import com.simurgh.prayertimes.more.DisclaimerActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -239,7 +241,7 @@ public class MainActivity extends AppCompatActivity
                     return new TodayFragment();
 
                 case 1:
-                    return new PrayersFragment();
+                    return new TimesFragment();
 
                 case 2:
                     return new QuranFragment();
@@ -248,7 +250,7 @@ public class MainActivity extends AppCompatActivity
                     return new MosqueFragment();
 
                 case 4:
-                    return new MosqueFragment();
+                    return new MoreFragment();
 
                 case 5:
                     return new MoreFragment();

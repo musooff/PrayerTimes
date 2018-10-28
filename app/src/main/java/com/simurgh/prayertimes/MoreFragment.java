@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.simurgh.prayertimes.more.DisclaimerActivity;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
