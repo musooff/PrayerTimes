@@ -21,6 +21,7 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.simurgh.prayertimes.R;
+import com.simurgh.prayertimes.library.LibraryActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class NamesActivity extends Activity {
 
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setHasFixedSize(true);
-
+        mRecyclerView.addItemDecoration(new LibraryActivity.GridSpacingItemDecoration(2, 30, true));
         dataNames = new ArrayList<>();
 
         DataNamesAdapter mAdapter = new DataNamesAdapter(dataNames);

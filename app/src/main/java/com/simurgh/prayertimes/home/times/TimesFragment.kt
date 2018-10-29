@@ -1,10 +1,12 @@
 package com.simurgh.prayertimes.home.times
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.simurgh.prayertimes.R
 import com.simurgh.prayertimes.model.AppPreference
@@ -25,13 +27,18 @@ import java.util.Date
 
 class TimesFragment: Fragment() {
 
-    lateinit var appDatabase: AppDatabase
+    private lateinit var appDatabase: AppDatabase
     lateinit var prayerTimeDao: PrayerTimeDao
     var disposable = CompositeDisposable()
 
-    var latLon: Array<Double> = arrayOf()
-    var today: Date? = null
-    var day:Int = 0
+    lateinit var curName: TextView
+    lateinit var curTime:TextView
+
+    private var latLon: Array<Double> = arrayOf()
+    private var today: Date? = null
+    private var realToday: Date? = null
+
+    private var day:Int = 0
     var month: Int = 0
     var year: Int = 0
     var method: Int = 2
@@ -47,6 +54,7 @@ class TimesFragment: Fragment() {
         prayerTimeDao = appDatabase.prayerTimeDao()
 
         today = getAppPref().getToday()
+        realToday = today
         day = today!!.date
         month = today!!.month + 1
         year = today!!.year +1900
@@ -108,6 +116,82 @@ class TimesFragment: Fragment() {
         }
     }
 
+    private fun setPrayerTime(prayerTime: PrayerTime){
+
+        val timings = prayerTime.timings
+        val now = getAppPref().getFormattedNow(getAppPref().getToday())
+        val nowMin = getMinutes(now)
+        val t1 = getMinutes(timings!!.Fajr!!)
+        val t2 = getMinutes(timings.Sunrise!!)
+        val t3 = getMinutes(timings.Dhuhr!!)
+        val t4 = getMinutes(timings.Asr!!)
+        val t5 = getMinutes(timings.Maghrib!!)
+        val t6 = getMinutes(timings.Isha!!)
+
+        when {
+            nowMin <= t1 -> {
+                curName = time_name_6
+                curTime = time_time_6
+                timeCountDown( t1 - nowMin, prayerTime)
+            }
+            nowMin in (t1 + 1)..t2 -> {
+                curName = time_name_1
+                curTime = time_time_1
+                timeCountDown( t2 - nowMin, prayerTime)
+            }
+            nowMin in (t2 + 1)..t3 -> {
+                curName = time_name_2
+                curTime = time_time_2
+                timeCountDown( t3 - nowMin, prayerTime)
+            }
+            nowMin in (t3 + 1)..t4 -> {
+                curName = time_name_3
+                curTime = time_time_3
+                timeCountDown(t4 - nowMin, prayerTime)
+            }
+            nowMin in (t4 + 1)..t5 -> {
+                curName = time_name_4
+                curTime = time_time_4
+                timeCountDown( t5 - nowMin, prayerTime)
+            }
+            nowMin in (t5 + 1)..t6 -> {
+                curName = time_name_5
+                curTime = time_time_5
+                timeCountDown( t6 - nowMin, prayerTime)
+            }
+            nowMin > t6 -> {
+                curName = time_name_6
+                curTime = time_time_6
+            }
+
+        }
+
+        curName.setTextColor(resources.getColor(R.color.greenMain))
+        curTime.setTextColor(resources.getColor(R.color.greenMain))
+
+    }
+
+    private fun timeCountDown(minute: Int, prayerTime: PrayerTime){
+        object: CountDownTimer(minute * 60000L, minute * 60000L){
+            override fun onFinish() {
+                curName.setTextColor(resources.getColor(R.color.black))
+                curTime.setTextColor(resources.getColor(R.color.black))
+                setPrayerTime(prayerTime)
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+            }
+        }.start()
+
+    }
+
+    private fun getMinutes(time: String): Int {
+        val units = time.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val hours = Integer.parseInt(units[0])
+        val minutes = Integer.parseInt(units[1])
+        return 60 * hours + minutes
+    }
+
     private fun setTimes(data: PrayerTime){
         time_today.text = getAppPref().getFormattedTime(data.date!!.timestamp!!)
         time_time_1.text = data.timings!!.Fajr
@@ -116,6 +200,14 @@ class TimesFragment: Fragment() {
         time_time_4.text = data.timings!!.Asr
         time_time_5.text = data.timings!!.Maghrib
         time_time_6.text = data.timings!!.Isha
+
+        if (realToday == today){
+            setPrayerTime(data)
+        }
+        else{
+            curName.setTextColor(resources.getColor(R.color.black))
+            curTime.setTextColor(resources.getColor(R.color.black))
+        }
     }
 
     override fun onDestroy() {

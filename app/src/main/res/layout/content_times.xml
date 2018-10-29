@@ -42,6 +42,7 @@
                 android:layout_height="40dp"
                 android:textSize="20sp"
                 android:gravity="center"
+                android:textStyle="bold"
                 android:textAlignment="center"
                 android:paddingRight="20dp"
                 android:paddingLeft="20dp"

@@ -48,8 +48,6 @@ class HomeFragment : Fragment(){
     var disposable = CompositeDisposable()
 
 
-    var tomorrow: PrayerTime? = null
-
     private var latLon: Array<Double> = arrayOf()
     private var today: Date? = null
     private var day:Int = 0
@@ -74,7 +72,7 @@ class HomeFragment : Fragment(){
         month = today!!.month + 1
         year = today!!.year +1900
 
-        getTimings(true)
+        getTimings()
         setOneName()
         setOneHadis()
         setOneAyah()
@@ -87,7 +85,7 @@ class HomeFragment : Fragment(){
             startActivity(names)
         }
 
-        tv_lib.setOnClickListener{
+        cv_lib.setOnClickListener{
             val lib = Intent(activity, LibraryActivity::class.java)
             startActivity(lib)
         }
@@ -103,7 +101,7 @@ class HomeFragment : Fragment(){
 
     }
 
-    private fun getTimings(isToday: Boolean = false){
+    private fun getTimings(){
         val tempDay = if (day < 10) '0'+day.toString() else day.toString()
         prayerTimeDao
                 .getTodayTimes(tempDay, month, year.toString())
@@ -111,12 +109,7 @@ class HomeFragment : Fragment(){
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object: SingleObserver<PrayerTime> {
                     override fun onSuccess(t: PrayerTime) {
-                        if (isToday){
-                            setPrayerTime(t)
-                        }
-                        else{
-                            tomorrow = t
-                        }
+                        setPrayerTime(t)
                     }
 
                     override fun onSubscribe(d: Disposable) {
