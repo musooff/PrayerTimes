@@ -48,7 +48,6 @@
                 android:paddingLeft="20dp"
                 android:textColor="@color/greenMain"
                 android:id="@+id/time_today"
-                android:text="27 Oct 2018"
                 />
             <ImageView
                 android:layout_width="30dp"

@@ -120,4 +120,11 @@ class AppPreference() {
         editor.putBoolean("isQuranTitlesSaved", boolean).apply()
     }
 
+    fun getDailyToday(): String? {
+        return sharedPreferences.getString("dailyToday", "00/0000")
+    }
+
+    fun setDailyToday(dailyToday: String){
+        editor.putString("dailyToday", dailyToday).apply()
+    }
 }

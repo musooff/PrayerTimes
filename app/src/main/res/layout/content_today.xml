@@ -49,7 +49,6 @@
                         android:layout_centerHorizontal="true"
                         android:id="@+id/tv_next_prayer_name"
                         android:layout_centerVertical="true"
-                        android:text="Бомдод"
                         android:textSize="80sp"
                         android:textColor="@color/white"/>
                     <TextView
@@ -126,7 +125,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/tv_verse_name"
-                                android:text="Аз-Зухруф (43:65)"
+                                android:text="Оли Имрон (3:160)"
                                 android:textSize="12sp"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -137,7 +136,7 @@
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:id="@+id/tv_verse"
-                        android:text="But sects from among themselves fell into disagreement: then woe to the wrong-doers, from Penalty of a Grievous Day!"/>
+                        android:text="Агар Худо шуморо ёрӣ кунад, ҳеҷ кас бар шумо ғалаба нахоҳад кард. Ва агар шуморо хор дорад, чӣ касе аз он пас ёриатон хоҳад кард? Пас мӯъминон бояд ки бар Худо таваккал кунанд!"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

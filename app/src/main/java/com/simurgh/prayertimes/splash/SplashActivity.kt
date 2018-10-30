@@ -43,7 +43,7 @@ import java.util.*
 class SplashActivity: Activity(){
 
     companion object {
-        const val TODAY_VERSE_COUNT = 29
+        const val TODAY_VERSE_COUNT = 31
     }
 
     private lateinit var appDatabase: AppDatabase
@@ -253,7 +253,7 @@ class SplashActivity: Activity(){
                     if (response.isSuccessful) {
                         val result = response.body()!!.data
                         Observable.fromCallable{
-                            verseDao.insert(Verse(result[0].surah!!.number, result[0].numberInSurah, result[0].text!!, result[1].text!!))
+                            verseDao.insert(Verse(result[0].surah!!.number, result[0].numberInSurah, result[0].text!!, result[1].text!!, true))
                         }
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())

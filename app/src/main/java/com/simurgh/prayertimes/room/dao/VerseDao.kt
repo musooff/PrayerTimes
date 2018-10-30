@@ -13,8 +13,8 @@ interface VerseDao {
     @Query("SELECT * FROM Verse WHERE titleNo = :titleNo ORDER BY number ASC")
     fun getVerses(titleNo: Int): MutableList<Verse>
 
-    @Query("SELECT * FROM Verse ORDER BY RANDOM() LIMIT 1")
-    fun getRandomVerse(): Single<DayVerse>
+    @Query("SELECT * FROM Verse WHERE isDayVerse = :isDayVerse ORDER BY number ASC LIMIT :today-1, 1")
+    fun getTodayVerse(isDayVerse: Boolean, today: Int): Single<DayVerse>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(verses: MutableList<Verse>)

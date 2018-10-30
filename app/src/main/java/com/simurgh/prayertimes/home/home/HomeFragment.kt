@@ -79,8 +79,6 @@ class HomeFragment : Fragment(){
         setOneAyah()
         setOneDua()
 
-        //downloadVerses()
-
         tv_read_name.setOnClickListener {
             val names = Intent(activity, NamesActivity::class.java)
             startActivity(names)
@@ -250,7 +248,7 @@ class HomeFragment : Fragment(){
     }
 
     private fun setOneAyah(){
-        verseDao.getRandomVerse()
+        verseDao.getTodayVerse(true, day)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<DayVerse>{

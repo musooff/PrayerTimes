@@ -29,16 +29,16 @@ import java.net.URL
 
 class SurahActivity: Activity() {
     
-    var verses: MutableList<Verse> = mutableListOf()
-    var surahAdapter = SurahAdapter()
+    var verses: List<Verse> = arrayListOf()
+    private var surahAdapter = SurahAdapter()
 
     var titleNo: Int = 0
     var name: String? = null
-    var transcribed: String? = null
+    private var transcribed: String? = null
 
-    val compositeDisposable = CompositeDisposable()
-    lateinit var appDatabase: AppDatabase
-    lateinit var verseDao: VerseDao
+    private val compositeDisposable = CompositeDisposable()
+    private lateinit var appDatabase: AppDatabase
+    private lateinit var verseDao: VerseDao
 
 
     companion object {
@@ -76,9 +76,9 @@ class SurahActivity: Activity() {
         verseDao = appDatabase.verseDao()
 
         compositeDisposable.add(Observable.fromCallable {
-            verses = verseDao.getVerses(titleNo)
-            if (verses.size == 0){
-                val str_url = "http://api.alquran.cloud/surah/$titleNo/editions/quran-simple,tg.ayati,en.transliteration"
+            val verseList = verseDao.getVerses(titleNo)
+            if (verseList.size < 3){
+                val str_url = "http://api.alquran.cloud/surah/$titleNo/editions/quran-simple,tg.ayati"
                 try {
                     val url = URL(str_url)
                     val httpURLConnection = url.openConnection() as HttpURLConnection
@@ -95,9 +95,11 @@ class SurahActivity: Activity() {
                         if (titleNo != 0 && i == 0 && arabic.contains(BISMILLAH)){ // that's for bismillah verse, it's strange
                             arabic = arabic.replace(BISMILLAH, "")
                         }
-                        verses.add(Verse(titleNo, verseNo, arabic, tajik))
+                        verseList.add(Verse(titleNo, verseNo, arabic, tajik))
                     }
-                    verseDao.insert(verses)
+                    verseDao.insert(verseList)
+
+                    verses = verseList.sortedBy { verse -> verse.number }
 
                 } catch (e: MalformedURLException) {
                     e.printStackTrace()
@@ -106,7 +108,9 @@ class SurahActivity: Activity() {
                 }
 
             }
+            else verses = verseList
         }
+
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe{surahAdapter.notifyDataSetChanged()})
