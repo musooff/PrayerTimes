@@ -285,6 +285,13 @@
 \n\tХамахи хукукхои барнома ба Симург™ тааллук дорад. Хар як хати код, нишонахо, баъзе суратхо ва навистачотхо дар хукукхои барнома мебошад. APIхо ва дигар китобхонахое  ки дар ин барнома истифода шудаанд дар хукукхои барнома дохел намебошад.
 \n\tИн барномаи мо бо дигар барномахое шабехи дошта метавонад. Мисоли одди, гурухи мо ин барномаро мисли MuslimPro кардаанд, то инки истифодабарандагон ин баронмаро бо осони истифода баранд. Инро гуфта гузаштан чоизи кабул аст, ки гурухи мо ягон хати ход, нишона, сурат, аудио ва дигар махсулоти дигиталии дигар барномахоро харгиз истифода намебарад ва набурда аст. Хукукхои чахони хукукхои идеягиро мухофизат намекунад. Танхо татбики он хукукхоро мухофизат мекунад. Мо чун хамаи ин барномаро аз 0 то ба охир расонидем, хукукхои ягон дигар ширкат ва ё барномаро поймол накардаем. Бо ин нигох накарда, агар шумо фикр мекунед, ки хакку хукукхои шуморо дар ин барнома мо поймол кардаем, ба мо (tjkinc@outlook.com) бо хуччатхои даркори нависед.
 \n\tТашаккури зиёд</string>
+    
+    <integer-array name="titleNos">
+        <item>11</item><item>39</item><item>16</item><item>30</item><item>14</item><item>29</item><item>14</item><item>57</item><item>2</item><item>20</item><item>8</item><item>16</item><item>21</item><item>78</item><item>7</item><item>10</item><item>11</item><item>13</item><item>23</item><item>2</item><item>93</item><item>16</item><item>66</item><item>27</item><item>36</item><item>11</item><item>21</item><item>26</item><item>25</item>
+    </integer-array>
+    <integer-array name="verseNos">
+        <item>88</item><item>53</item><item>79</item><item>60</item><item>41</item><item>45</item><item>30</item><item>4</item><item>2</item><item>114</item><item>19</item><item>23</item><item>107</item><item>8</item><item>156</item><item>55</item><item>88</item><item>16</item><item>118</item><item>156</item><item>7</item><item>61</item><item>11</item><item>92</item><item>38</item><item>6</item><item>33</item><item>80</item><item>20</item>
+    </integer-array>
     <string name="convey">\"Аз ман, агарчанде ки як оят бошад ҳам, ба мардум бирасонед\" - Муҳаммад с.а.в</string>
     <string name="footer_today">ИМРУЗ</string>
     <string name="footer_times">ВАКТХО</string>

@@ -1,34 +1,27 @@
 package com.simurgh.prayertimes.home
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
-import androidx.core.app.ActivityCompat
+import android.widget.Toast
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import com.cleveroad.slidingtutorial.*
 import com.simurgh.prayertimes.*
+import com.simurgh.prayertimes.R
 import com.simurgh.prayertimes.home.mosque.MosqueFragment
 import com.simurgh.prayertimes.home.quran.QuranFragment
 import com.simurgh.prayertimes.home.times.TimesFragment
-import com.simurgh.prayertimes.model.AppPreference
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.footer.*
-import android.widget.Toast
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.simurgh.prayertimes.home.home.HomeFragment
 import com.simurgh.prayertimes.home.more.MoreFragment
-import java.io.IOException
-import java.util.*
-
+import com.simurgh.prayertimes.model.AppPreference
 
 open class HomeBaseActivity: FragmentActivity() {
 
@@ -39,7 +32,9 @@ open class HomeBaseActivity: FragmentActivity() {
     }
 
     private lateinit var currentItem: View
-    private var mFusedLocationClient: FusedLocationProviderClient? = null
+
+    private var doubleBackToExitPressedOnce = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,39 +43,97 @@ open class HomeBaseActivity: FragmentActivity() {
         currentItem = ll_today
         currentItem.isActivated = true
 
-        val pagerAdapter = HomePagerAdapter(supportFragmentManager)
-        pager.adapter = pagerAdapter
+        pager.adapter = HomePagerAdapter(supportFragmentManager)
         pager.setPagingEnabled(false)
         linkFooterToPager()
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationCheck()
+        if (getAppPref().isFirstRun()) runIntroSlides()
+
     }
 
-    private fun locationCheck(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), locationRequestCode)
-        }
+    private fun getAppPref(): AppPreference {
+        return AppPreference(applicationContext)
     }
 
-    private fun updateLocationData(location: Location){
-        val addresses: List<Address>
-        val geoCoder = Geocoder(applicationContext, Locale.getDefault())
-        try {
-            addresses = geoCoder.getFromLocation(location.latitude, location.longitude, 1)
-            val address = addresses[0].getAddressLine(0)
-            Log.e("MY_TAG", address)
-            AppPreference(applicationContext).setLatLon(location.latitude, location.longitude)
-            AppPreference(applicationContext).setAddress(address)
+    private fun runIntroSlides() {
+        getAppPref().setFirstRun(false)
+        val indicatorOptions = IndicatorOptions.newBuilder(applicationContext)
+                .setElementColorRes(R.color.white)
+                .setSelectedElementColorRes(R.color.grey)
+                .setRenderer { canvas, elementBounds, paint, _ ->
+                    var radius = Math.min(elementBounds.width(), elementBounds.height())
+                    radius /= 2f
+                    canvas.drawCircle(elementBounds.centerX(), elementBounds.centerY(), radius, paint)
+                }
+                .build()
 
-        } catch (e: IOException) {
-            e.printStackTrace()
+        val tutorialPageOptionsProvider = TutorialPageOptionsProvider { position ->
+            @LayoutRes val pageLayoutResId: Int
+            val tutorialItems: Array<TransformItem>
+            when (position) {
+                0 -> {
+                    pageLayoutResId = R.layout.intro_first
+                    tutorialItems = arrayOf(TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.1f), TransformItem.create(R.id.iv_first, Direction.RIGHT_TO_LEFT, 0.2f), TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.3f), TransformItem.create(R.id.iv_fourth, Direction.RIGHT_TO_LEFT, 0.5f), TransformItem.create(R.id.iv_fifth, Direction.RIGHT_TO_LEFT, 0.6f), TransformItem.create(R.id.iv_sixth, Direction.RIGHT_TO_LEFT, 0.7f), TransformItem.create(R.id.iv_seventh, Direction.RIGHT_TO_LEFT, 0.8f), TransformItem.create(R.id.iv_eigth, Direction.RIGHT_TO_LEFT, 0.9f))
+                }
+                1 -> {
+                    pageLayoutResId = R.layout.intro_second
+                    tutorialItems = arrayOf(TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f), TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f), TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f))
+                }
+                2 -> {
+                    pageLayoutResId = R.layout.intro_third
+                    tutorialItems = arrayOf(TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f), TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f), TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f))
+                }
+                3 -> {
+                    pageLayoutResId = R.layout.intro_fourth
+                    tutorialItems = arrayOf(TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f), TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f), TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f))
+                }
+                4 -> {
+                    pageLayoutResId = R.layout.intro_fifth
+                    tutorialItems = arrayOf(TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f), TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f), TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f))
+                }
+                5 -> {
+                    pageLayoutResId = R.layout.intro_sixth
+                    tutorialItems = arrayOf(TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f), TransformItem.create(R.id.iv_second, Direction.RIGHT_TO_LEFT, 0.05f), TransformItem.create(R.id.iv_third, Direction.RIGHT_TO_LEFT, 0.07f))
+                }
+                6 -> {
+                    pageLayoutResId = R.layout.intro_seventh
+                    tutorialItems = arrayOf(TransformItem.create(R.id.iv_main, Direction.LEFT_TO_RIGHT, 0.2f))
+                }
+                else -> {
+                    throw IllegalArgumentException("Unknown position: $position")
+                }
+            }
+
+            PageOptions.create(pageLayoutResId, position, *tutorialItems)
         }
+
+        val tutorialOptions = TutorialFragment.newTutorialOptionsBuilder(applicationContext)
+                .setUseAutoRemoveTutorialFragment(false)
+                .setUseInfiniteScroll(false)
+                .setTutorialPageProvider(tutorialPageOptionsProvider)
+                .setIndicatorOptions(indicatorOptions)
+                .setUseAutoRemoveTutorialFragment(true)
+                .setPagesCount(7)
+                .build()
+
+        val tutorialFragment = TutorialFragment.newInstance(tutorialOptions)
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.container, tutorialFragment)
+                .commit()
     }
 
     override fun onBackPressed() {
         if (pager.currentItem == 0) {
-            super.onBackPressed()
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed()
+                return
+            }
+            this.doubleBackToExitPressedOnce = true
+            Toast.makeText(this, "Барои хуруч боз як бори дигар пахш кунед", Toast.LENGTH_SHORT).show()
+
+            Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+
         } else {
             pager.currentItem = 0
             updateFooterButton(ll_today)
@@ -133,25 +186,6 @@ open class HomeBaseActivity: FragmentActivity() {
         currentItem.isActivated = false
         currentItem = view
         currentItem.isActivated = true
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,grantResults: IntArray) {
-        when (requestCode) {
-            1000 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return
-                    }
-                    mFusedLocationClient!!.lastLocation.addOnSuccessListener {
-                        if (it != null){
-                            updateLocationData(it)
-                        }
-                    }
-                } else {
-                    Toast.makeText(applicationContext, "Ичоза ба истифида барии макон гирифта нашуд. Вактхои Душанберо бор мекунем!", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
     }
 
 }

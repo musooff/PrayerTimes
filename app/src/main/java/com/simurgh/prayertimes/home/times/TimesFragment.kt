@@ -31,6 +31,8 @@ class TimesFragment: Fragment() {
     lateinit var prayerTimeDao: PrayerTimeDao
     var disposable = CompositeDisposable()
 
+    var timer: CountDownTimer? = null
+
     lateinit var curName: TextView
     lateinit var curTime:TextView
 
@@ -172,7 +174,7 @@ class TimesFragment: Fragment() {
     }
 
     private fun timeCountDown(minute: Int, prayerTime: PrayerTime){
-        object: CountDownTimer(minute * 60000L, minute * 60000L){
+        timer = object: CountDownTimer(minute * 60000L, minute * 60000L){
             override fun onFinish() {
                 curName.setTextColor(resources.getColor(R.color.black))
                 curTime.setTextColor(resources.getColor(R.color.black))
@@ -213,6 +215,7 @@ class TimesFragment: Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         disposable.clear()
+        timer?.cancel()
     }
 
     fun request(month: Int, year: Int) {
@@ -249,4 +252,5 @@ class TimesFragment: Fragment() {
     fun getAppPref(): AppPreference{
         return AppPreference(context!!)
     }
+
 }

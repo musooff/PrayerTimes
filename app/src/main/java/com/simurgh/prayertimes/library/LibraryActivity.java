@@ -84,7 +84,7 @@ public class LibraryActivity extends Activity {
                 1,
                 sharedPreferences.getBoolean("book2_vasiyatho.pdf",false)));
         dataBooks.add(new DataBook(
-                "МУСНАДИ ИМОМ АБӮҲАНИФА",
+                "Муснади Имом Абуханифа",
                 "book3_musnad.pdf",
                 4.5,
                 R.drawable.book_3,
@@ -98,14 +98,14 @@ public class LibraryActivity extends Activity {
                 3,
                 sharedPreferences.getBoolean("book4_duo.pdf",false)));
         dataBooks.add(new DataBook(
-                "САВОЛУ ҶАВОБ ДАР БОРАИ АҲКОМИ ҲАҶ ВА УМРА",
+                "Саволу Ҷавоб дар бораи ахкоми хач ва умра",
                 "book5_savol.pdf",
                 3.7,
                 R.drawable.book_5,
                 4,
                 sharedPreferences.getBoolean("book5_savol.pdf",false)));
         dataBooks.add(new DataBook(
-                "ЧИҲИЛ ҲАДИСИ МАККӢ",
+                "Чихил хадици Макки",
                 "book6_chihil.pdf",
                 0.5,
                 R.drawable.book_6,
@@ -179,8 +179,7 @@ public class LibraryActivity extends Activity {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                 category.setDownloaded(true);
-                editor.putBoolean(category.getEngName(),true);
-                editor.apply();
+                editor.putBoolean(category.getEngName(),true).apply();
                 mAdapter.notifyDataSetChanged();
 
             }

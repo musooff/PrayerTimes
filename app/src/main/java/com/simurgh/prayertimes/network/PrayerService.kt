@@ -50,9 +50,9 @@ class PrayerService{
         call.enqueue(callback)
     }
 
-    fun randomVerse(verseNo: Int, callback: Callback<VerseResult>){
+    fun getVerse(key: String, callback: Callback<VerseResult>){
         val prayerAPI = startQuranService()
-        val call = prayerAPI.randomVerse(verseNo)
+        val call = prayerAPI.getVerse(key)
         call.enqueue(callback)
     }
 }

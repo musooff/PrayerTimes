@@ -17,29 +17,23 @@
         android:theme="@style/AppTheme"
         android:name="androidx.multidex.MultiDexApplication"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".home.HomeBaseActivity">
+        <activity android:name=".splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".home.HomeBaseActivity">
 
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
         <activity android:name=".surah.SurahActivity"/>
-        <activity android:name=".SplashActivity">
-        </activity>
         <activity android:name=".mosque.MosqueActivity" />
         <activity android:name=".library.BookActivity" />
         <activity android:name=".library.LibraryActivity">
 
         </activity>
-
-        <receiver android:name=".NotificationService"/>
 
         <activity android:name=".names.NamesActivity"/>
         <activity android:name=".home.more.DisclaimerActivity"/>

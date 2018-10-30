@@ -16,6 +16,6 @@ interface PrayerAPI {
     @GET("calendar")
     fun prayerTimes(@Query("latitude") latitude: Double, @Query("longitude") longitude: Double, @Query("method") method: Int, @Query("month") month: Int, @Query("year") year: Int): Call<Result>
 
-    @GET("ayah/{verseNo}/editions/quran-simple,tg.ayati")
-    fun randomVerse(@Path("verseNo") verseNo: Int): Call<VerseResult>
+    @GET("ayah/{key}/editions/quran-simple,tg.ayati")
+    fun getVerse(@Path("key") key: String): Call<VerseResult>
 }

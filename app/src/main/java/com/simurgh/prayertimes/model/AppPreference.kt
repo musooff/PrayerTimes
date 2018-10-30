@@ -16,6 +16,8 @@ import com.google.android.gms.location.LocationServices
 
 
 
+
+
 class AppPreference() {
     lateinit var context: Context
 
@@ -81,9 +83,41 @@ class AppPreference() {
         return cal.time
     }
 
+    fun getNextMonth(date: Date): Int {
+        val cal = Calendar.getInstance()
+        cal.time = date
+        cal.add(Calendar.MONTH, 1)
+        return cal.time.month + 1
+    }
+
     fun getFormattedNow(date: Date): String{
         val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         return simpleDateFormat.format(date)
+    }
+
+    fun isFirstRun(): Boolean{
+        return sharedPreferences.getBoolean("firstRun", true)
+    }
+
+    fun setFirstRun(boolean: Boolean){
+        editor.putBoolean("firstRun", boolean).apply()
+    }
+
+    fun isVersesExist(): Boolean{
+        return sharedPreferences.getBoolean("isVersesExist", false)
+    }
+
+    fun setVersesExist(boolean: Boolean){
+        editor.putBoolean("isVersesExist", boolean).apply()
+    }
+
+
+    fun isQuranTitlesSaved():Boolean{
+        return sharedPreferences.getBoolean("isQuranTitlesSaved", false)
+    }
+
+    fun setQuranTitlesSaved(boolean: Boolean){
+        editor.putBoolean("isQuranTitlesSaved", boolean).apply()
     }
 
 }

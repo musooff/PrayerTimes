@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.simurgh.prayertimes.R
-import com.simurgh.prayertimes.extensions.MyExtensions
+import com.simurgh.prayertimes.model.MyExtensions
 import com.simurgh.prayertimes.home.times.PrayerTime
 import com.simurgh.prayertimes.home.times.Result
 import com.simurgh.prayertimes.library.LibraryActivity
@@ -31,7 +31,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.content_home.*
-import kotlinx.android.synthetic.main.dialog_verve.*
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -46,6 +45,8 @@ class HomeFragment : Fragment(){
     lateinit var prayerTimeDao: PrayerTimeDao
     lateinit var verseDao: VerseDao
     var disposable = CompositeDisposable()
+
+    var timer: CountDownTimer? = null
 
 
     private var latLon: Array<Double> = arrayOf()
@@ -170,7 +171,7 @@ class HomeFragment : Fragment(){
     }
 
     private fun timeCountDown(minute: Int, prayerTime: PrayerTime){
-        object: CountDownTimer(minute * 60000L, 60000L){
+        timer = object: CountDownTimer(minute * 60000L, 60000L){
             override fun onFinish() {
                 tv_next_prayer_remaining.text = ""
                 setPrayerTime(prayerTime)
@@ -277,34 +278,11 @@ class HomeFragment : Fragment(){
                     }
 
                     override fun onError(e: Throwable) {
-                        Log.e("MY_TAG_HOME", "Error while getting verse from DB")
+                        Log.e("MY_TAG_HOME", "Error while getting verse from database")
                     }
                 })
     }
 
-    private fun downloadVerses(){
-        for (i in 0 until 50) {
-            val ranVerse = Random().nextInt(6236) + 1
-            PrayerService().randomVerse(ranVerse, object : Callback<VerseResult> {
-                override fun onFailure(call: Call<VerseResult>, t: Throwable) {
-                    t.printStackTrace()
-                    Log.e("MY_TAG_HOME", "Error while requesting Quran Data from cloud")
-                }
-
-                override fun onResponse(call: Call<VerseResult>, response: Response<VerseResult>) {
-                    if (response.isSuccessful) {
-                        val result = response.body()!!.data
-                        Observable.fromCallable{
-                            verseDao.insert(Verse(result[0].surah!!.number, result[0].numberInSurah, result[0].text!!, result[1].text!!))
-                        }
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe()
-                    }
-                }
-            })
-        }
-    }
 
 
 
@@ -341,6 +319,12 @@ class HomeFragment : Fragment(){
                 }
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel()
+
     }
 
 }

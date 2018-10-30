@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -9,17 +10,27 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/footer"/>
-    <androidx.cardview.widget.CardView
+        android:layout_above="@+id/footer_top"/>
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/footer"
         android:layout_alignParentBottom="true"
-        app:cardElevation="10dp">
-        <include layout="@layout/footer"
+        android:id="@+id/footer_top">
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent" />
-    </androidx.cardview.widget.CardView>
+            android:id="@+id/footer"
+            app:cardElevation="10dp">
+            <include layout="@layout/footer"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
 
 
 </RelativeLayout>

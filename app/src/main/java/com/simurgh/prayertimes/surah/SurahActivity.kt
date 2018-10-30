@@ -11,12 +11,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.simurgh.prayertimes.R
-import com.simurgh.prayertimes.extensions.MyExtensions
+import com.simurgh.prayertimes.model.MyExtensions
 import com.simurgh.prayertimes.home.quran.QuranTitle
 import com.simurgh.prayertimes.room.AppDatabase
 import com.simurgh.prayertimes.room.dao.VerseDao
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

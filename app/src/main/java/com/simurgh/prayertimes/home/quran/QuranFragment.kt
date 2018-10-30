@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.simurgh.prayertimes.R
-import com.simurgh.prayertimes.extensions.MyExtensions
+import com.simurgh.prayertimes.model.MyExtensions
 import com.simurgh.prayertimes.room.AppDatabase
 import com.simurgh.prayertimes.room.dao.QuranTitleDao
 import com.simurgh.prayertimes.surah.SurahActivity
@@ -46,33 +46,7 @@ class QuranFragment: Fragment() {
         quranTitleDao = appDatabase.quranTitleDao()
 
         compositeDisposable.add(Observable.fromCallable {
-            quranTitles = quranTitleDao.getAll()
-            if (quranTitles.size == 0){
-                try {
-                    val inputStream = activity!!.resources.assets.open("surahs.json")
-                    val jsonObject = JSONObject(MyExtensions.readStream(inputStream))
-                    val dataSurah = jsonObject.getJSONArray("quranTitles")
-
-                    for (i in 0 until dataSurah.length()) {
-
-                        val titleNo = dataSurah.getJSONObject(i).getInt("titleNo")
-                        val name = dataSurah.getJSONObject(i).getString("name")
-                        val transcribed = dataSurah.getJSONObject(i).getString("transcribed")
-                        val translated = dataSurah.getJSONObject(i).getString("translated")
-
-                        quranTitles.add(QuranTitle(titleNo, name, transcribed, translated))
-                    }
-
-                    quranTitleDao.insert(quranTitles)
-
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-
-            }
-        }
+            quranTitles = quranTitleDao.getAll()}
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {mAdapter.notifyDataSetChanged()})

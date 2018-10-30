@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes.extensions;
+package com.simurgh.prayertimes.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
