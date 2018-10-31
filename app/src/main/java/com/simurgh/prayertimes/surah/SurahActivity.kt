@@ -8,11 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.simurgh.prayertimes.R
 import com.simurgh.prayertimes.model.MyExtensions
 import com.simurgh.prayertimes.home.quran.QuranTitle
+import com.simurgh.prayertimes.model.AppPreference
 import com.simurgh.prayertimes.room.AppDatabase
 import com.simurgh.prayertimes.room.dao.VerseDao
 import io.reactivex.Observable
@@ -42,6 +44,7 @@ class SurahActivity: Activity() {
 
 
     companion object {
+
         const val TITLE_NO = "titleNo"
         const val NAME = "name"
         const val TRANSCRIBED = "transcribed"
@@ -75,9 +78,19 @@ class SurahActivity: Activity() {
         appDatabase = AppDatabase.getInstance(applicationContext)!!
         verseDao = appDatabase.verseDao()
 
+        getVerses()
+
+
+    }
+
+    fun getVerses(){
         compositeDisposable.add(Observable.fromCallable {
             val verseList = verseDao.getVerses(titleNo)
             if (verseList.size < 3){
+                if (!getAppPref().isConnected()){
+                    runOnUiThread { showErrorDialog() }
+                    return@fromCallable
+                }
                 val str_url = "http://api.alquran.cloud/surah/$titleNo/editions/quran-simple,tg.ayati"
                 try {
                     val url = URL(str_url)
@@ -110,13 +123,25 @@ class SurahActivity: Activity() {
             }
             else verses = verseList
         }
-
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnError {  }
                 .subscribe{surahAdapter.notifyDataSetChanged()})
-
-
     }
+
+    private fun showErrorDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.network_error)
+                .setMessage(R.string.network_error_surah)
+                .setPositiveButton(R.string.button_retry) { _, _ -> getVerses()}
+                .setNegativeButton(R.string.button_exit){_,_ -> finish()}
+        builder.create().show()
+    }
+
+    private fun getAppPref(): AppPreference {
+        return AppPreference(applicationContext)
+    }
+
     
     inner class SurahAdapter: RecyclerView.Adapter<SurahViewHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurahViewHolder {

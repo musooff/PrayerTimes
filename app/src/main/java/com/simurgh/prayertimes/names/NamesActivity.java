@@ -1,10 +1,13 @@
 package com.simurgh.prayertimes.names;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -22,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.simurgh.prayertimes.R;
 import com.simurgh.prayertimes.library.LibraryActivity;
+import com.simurgh.prayertimes.model.AppPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +41,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * Created by moshe on 29/06/2017.
  */
 
-public class NamesActivity extends Activity {
+public class NamesActivity extends Activity implements MediaPlayer.OnPreparedListener {
 
 
     ArrayList<DataNames> dataNames;
@@ -45,6 +49,7 @@ public class NamesActivity extends Activity {
     RecyclerView mRecyclerView;
 
     DataNames requestedDataName;
+    MediaPlayer mMediaplayer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,50 +84,64 @@ public class NamesActivity extends Activity {
 
     }
 
+    private void showErrorDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.network_error)
+                .setMessage(R.string.network_error_names)
+                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.create().show();
+    }
+    private AppPreference getAppPref() {
+        return new AppPreference(this);
+    }
+
     public void downloadAndPlay(DataNames category){
+        if (!getAppPref().isConnected()){
+            showErrorDialog();
+            return;
+        }
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         StorageReference names = storageRef.child("names/name_"+category.getId()+".mp3");
+        names.getDownloadUrl()
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        try {
+                            final String url = uri.toString();
+                            stopPlaying();
+                            mMediaplayer = new MediaPlayer();
+                            mMediaplayer.setDataSource(url);
+                            mMediaplayer.setOnPreparedListener(NamesActivity.this);
+                            mMediaplayer.prepareAsync();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.e("File problem", exception.getMessage());
+                    }});
 
+    }
 
-        File storagePath = new File(Environment.getExternalStorageDirectory(), "NamesOfGod");
-        if(!storagePath.exists()) {
-            storagePath.mkdirs();
+    private void stopPlaying() {
+        if (mMediaplayer != null) {
+            mMediaplayer.stop();
+            mMediaplayer.release();
+            mMediaplayer = null;
         }
-        final File localFile = new File(storagePath,"name_"+category.getId()+".mp3");
-
-
-        names.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                String path = localFile.getPath();
-                MediaPlayer mediaPlayer = new  MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(path);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("File problem", exception.getMessage());
-            }
-        });
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 13){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                downloadAndPlay(requestedDataName);
-            } else {
-                Toast.makeText(getApplicationContext(), "Storage permission is required to play download recordings. Please try again", Toast.LENGTH_LONG).show();
-            }
-        }
+    public void onPrepared(MediaPlayer mp) {
+        mp.start();
     }
 
     public class DataNamesAdapter extends
@@ -155,14 +174,7 @@ public class NamesActivity extends Activity {
             sound.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        requestedDataName = category;
-                        ActivityCompat.requestPermissions(NamesActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 13);
-                    }
-                    else {
-                        downloadAndPlay(category);
-                    }
+                    downloadAndPlay(category);
                 }
             });
 

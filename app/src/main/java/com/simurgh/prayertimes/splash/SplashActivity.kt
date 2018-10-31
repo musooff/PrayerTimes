@@ -10,6 +10,7 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -57,6 +58,7 @@ class SplashActivity: Activity(){
     private var isPermissionTime = false
     private var month1downloaded = false
     private var month2downloaded = false
+    private var isShowingError = false
 
     private var versesDownloaded = 0
 
@@ -195,7 +197,30 @@ class SplashActivity: Activity(){
         return AppPreference(applicationContext)
     }
 
+    private fun showErrorDialog(){
+        if (!isShowingError){
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.network_error)
+                    .setMessage(R.string.network_error_splash)
+                    .setPositiveButton(R.string.button_retry) { _, _ -> restart() }
+                    .setNegativeButton(R.string.button_exit){_,_ -> finish()}
+            builder.create().show()
+        }
+    }
+
+    private fun restart(){
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+    }
+
     private fun request(downMonth: Int, year: Int) {
+        if (!getAppPref().isConnected()){
+            showErrorDialog()
+            isShowingError = true
+            return
+        }
         val latLon = getAppPref().getLatLon()
         method = getAppPref().getMethod()
 
@@ -239,6 +264,11 @@ class SplashActivity: Activity(){
 
 
     private fun downloadVerses(){
+        if (!getAppPref().isConnected()){
+            showErrorDialog()
+            isShowingError = true
+            return
+        }
         val titleNos = resources.getIntArray(R.array.titleNos)
         val verseNos = resources.getIntArray(R.array.verseNos)
         for (i in 0 until TODAY_VERSE_COUNT) {

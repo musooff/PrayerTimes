@@ -1,7 +1,9 @@
 package com.simurgh.prayertimes.library;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,6 +27,8 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.simurgh.prayertimes.R;
+import com.simurgh.prayertimes.model.AppPreference;
+import com.simurgh.prayertimes.room.AppDatabase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -127,6 +131,23 @@ public class LibraryActivity extends Activity {
         }
     }
 
+    private void showErrorDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.network_error)
+                .setMessage(R.string.network_error_lib)
+                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+        builder.create().show();
+    }
+
+    private AppPreference getAppPref() {
+        return new AppPreference(this);
+    }
+
     public static class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
         private int spanCount;
@@ -163,6 +184,10 @@ public class LibraryActivity extends Activity {
     }
 
     private void downloadBook(final DataBook category){
+        if (!getAppPref().isConnected()){
+            showErrorDialog();
+            return;
+        }
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         StorageReference book = storageRef.child("islamicBooks/"+category.getEngName());

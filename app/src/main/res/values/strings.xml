@@ -312,4 +312,14 @@
     <string name="title_disclaimer">Ҳуқуқҳо</string>
     <string name="title_more">Дигархо</string>
     <string name="home_now">Алъон</string>
+    <string name="network_error">Ба интернет пайваст нестед!</string>
+    <string name="button_ok">Фахмо</string>
+    <string name="button_retry">Дубора сайъ кунед</string>
+    <string name="button_exit">Баромад</string>
+    <string name="network_error_splash">Барои боргирии вактхои намоз лутфан ба интернет пайваст шавед!</string>
+    <string name="network_error_surah">Барои боргирии оятхо лутфан ба интернет пайваст шавед! Як бор боргири кофист.</string>
+    <string name="network_error_lib">Барои боргирии китоб лутфан ба интернет пайваст шавед! Як бор боргири кофист.</string>
+    <string name="network_error_names">Барои гӯш кардани номхо лутфан ба интернет пайваст шавед!</string>
+    <string name="network_error_times">Барои боргирии давоми вактхо лутфан ба интернет пайваст шавед!</string>
+
 </resources>

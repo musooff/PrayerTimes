@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import androidx.core.app.ActivityCompat
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
@@ -126,5 +128,11 @@ class AppPreference() {
 
     fun setDailyToday(dailyToday: String){
         editor.putString("dailyToday", dailyToday).apply()
+    }
+
+    fun isConnected(): Boolean{
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        return activeNetwork?.isConnected == true
     }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.simurgh.prayertimes.R
 import com.simurgh.prayertimes.model.AppPreference
@@ -218,7 +219,20 @@ class TimesFragment: Fragment() {
         timer?.cancel()
     }
 
+    private fun showErrorDialog(month: Int, year: Int){
+        val builder = AlertDialog.Builder(context!!)
+        builder.setTitle(R.string.network_error)
+                .setMessage(R.string.network_error_splash)
+                .setPositiveButton(R.string.button_retry) { _, _ -> request(month, year) }
+                .setNegativeButton(R.string.button_ok){dialog,_ -> dialog.dismiss()}
+        builder.create().show()
+    }
+
     fun request(month: Int, year: Int) {
+        if (!getAppPref().isConnected()){
+            showErrorDialog(month, year)
+            return
+        }
 
         latLon = getAppPref().getLatLon()
         method = getAppPref().getMethod()
