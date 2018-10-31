@@ -10,8 +10,8 @@ android {
         applicationId "com.simurgh.prayertimes"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 7
-        versionName "1.2.1"
+        versionCode 8
+        versionName "2.0.0"
         multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

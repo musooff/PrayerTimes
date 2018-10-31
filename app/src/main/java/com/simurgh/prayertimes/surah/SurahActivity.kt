@@ -3,6 +3,7 @@ package com.simurgh.prayertimes.surah
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -125,16 +126,23 @@ class SurahActivity: Activity() {
         }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {  }
-                .subscribe{surahAdapter.notifyDataSetChanged()})
+                .subscribe{
+                    gif.visibility = View.GONE
+                    surahAdapter.notifyDataSetChanged()
+                })
     }
 
     private fun showErrorDialog(){
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.network_error)
                 .setMessage(R.string.network_error_surah)
-                .setPositiveButton(R.string.button_retry) { _, _ -> getVerses()}
-                .setNegativeButton(R.string.button_exit){_,_ -> finish()}
+                .setPositiveButton(R.string.button_retry) { _, _ ->
+                    run {
+                        getVerses()
+                        gif.visibility = View.VISIBLE
+                    }
+                }
+                .setNegativeButton(R.string.button_exit) {_,_ -> finish()}
         builder.create().show()
     }
 

@@ -216,7 +216,11 @@ class TimesFragment: Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         disposable.clear()
+    }
+    override fun onPause() {
+        super.onPause()
         timer?.cancel()
+
     }
 
     private fun showErrorDialog(month: Int, year: Int){
