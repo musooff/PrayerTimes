@@ -46,7 +46,6 @@ public class NamesActivity extends Activity implements MediaPlayer.OnPreparedLis
 
     ArrayList<DataNames> dataNames;
 
-    RecyclerView mRecyclerView;
 
     DataNames requestedDataName;
     MediaPlayer mMediaplayer;
@@ -57,10 +56,9 @@ public class NamesActivity extends Activity implements MediaPlayer.OnPreparedLis
         setContentView(R.layout.activity_names);
 
 
-        mRecyclerView = findViewById(R.id.rv_names);
+        RecyclerView mRecyclerView = findViewById(R.id.rv_names);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),2);
-
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new LibraryActivity.GridSpacingItemDecoration(2, 30, true));

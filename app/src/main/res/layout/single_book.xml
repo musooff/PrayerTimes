@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
-    android:layout_width="150dp"
+    android:layout_width="wrap_content"
     android:layout_height="250dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="10dp"
@@ -14,6 +14,7 @@
                 android:layout_width="150dp"
                 android:layout_height="200dp"
                 android:id="@+id/iv_image"
+                android:layout_gravity="center_horizontal"
                 android:src="@drawable/book_1"
                 android:scaleType="fitXY"/>
             <RelativeLayout

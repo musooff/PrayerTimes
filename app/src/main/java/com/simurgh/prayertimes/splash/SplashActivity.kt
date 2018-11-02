@@ -13,6 +13,7 @@ import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.simurgh.prayertimes.R
@@ -157,10 +158,10 @@ class SplashActivity: Activity(){
         val geoCoder = Geocoder(applicationContext, Locale.getDefault())
         try {
             addresses = geoCoder.getFromLocation(location.latitude, location.longitude, 1)
-            val address = addresses[0].getAddressLine(0)
+            val address = addresses[0].locality
             Log.e("MY_TAG_SPLASH", "Address is update to $address, Request downloading new times for $month/$year and $nextMonth/$yearOfNextMonth")
-            AppPreference(applicationContext).setLatLon(location.latitude, location.longitude)
-            AppPreference(applicationContext).setAddress(address)
+            getAppPref().setLatLon(location.latitude, location.longitude)
+            getAppPref().setAddress(address)
 
             month1downloaded = false
             month2downloaded = false
@@ -306,10 +307,12 @@ class SplashActivity: Activity(){
     private fun saveVerseNames(){
         try {
             val inputStream = applicationContext.resources.assets.open("surahs.json")
+
             val jsonObject = JSONObject(MyExtensions.readStream(inputStream))
             val dataSurah = jsonObject.getJSONArray("quranTitles")
 
             val quranTitles = arrayListOf<QuranTitle>()
+
             for (i in 0 until dataSurah.length()) {
 
                 val titleNo = dataSurah.getJSONObject(i).getInt("titleNo")

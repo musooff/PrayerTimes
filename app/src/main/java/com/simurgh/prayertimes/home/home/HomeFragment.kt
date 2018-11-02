@@ -22,8 +22,6 @@ import com.simurgh.prayertimes.room.AppDatabase
 import com.simurgh.prayertimes.room.dao.PrayerTimeDao
 import com.simurgh.prayertimes.room.dao.VerseDao
 import com.simurgh.prayertimes.surah.DayVerse
-import com.simurgh.prayertimes.surah.Verse
-import com.simurgh.prayertimes.surah.VerseResult
 import io.reactivex.Observable
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -46,7 +44,7 @@ class HomeFragment : Fragment(){
     lateinit var verseDao: VerseDao
     var disposable = CompositeDisposable()
 
-    var timer: CountDownTimer? = null
+    private var timer: CountDownTimer? = null
 
 
     private var latLon: Array<Double> = arrayOf()
@@ -73,7 +71,6 @@ class HomeFragment : Fragment(){
         month = today!!.month + 1
         year = today!!.year +1900
 
-        getTimings()
         setOneName()
         setOneHadis()
         setOneAyah()
@@ -157,7 +154,9 @@ class HomeFragment : Fragment(){
                 tv_prayer_name.text = "Шом"
                 timeCountDown( t6 - nowMin, prayerTime)
             }
-            nowMin > t6 -> tv_prayer_name.text = "Хуфтан"
+            nowMin > t6 -> {
+                tv_prayer_name.text = "Хуфтан"
+            }
         }
     }
 
@@ -178,7 +177,9 @@ class HomeFragment : Fragment(){
             override fun onTick(millisUntilFinished: Long) {
                 tv_next_prayer_remaining.text = getTime((millisUntilFinished/60000).toInt() + 1)
             }
+
         }.start()
+
 
     }
     private fun getTime(minute: Int): String {
@@ -223,16 +224,14 @@ class HomeFragment : Fragment(){
     }
 
     private fun setOneDua() {
-        val random = Random()
-        val randomInt = random.nextInt(10)
         try {
             val inputStream = activity!!.resources.assets.open("duas.json")
             val jsonObject = JSONObject(MyExtensions.readStream(inputStream))
             val data = jsonObject.getJSONArray("data")
-            val arabic = data.getJSONObject(randomInt).getString("arabic")
-            val tajikTranscribed = data.getJSONObject(randomInt).getString("tajikTranscribed")
-            val tajik = data.getJSONObject(randomInt).getString("tajik")
-            val name = data.getJSONObject(randomInt).getString("name")
+            val arabic = data.getJSONObject(day).getString("arabic")
+            val tajikTranscribed = data.getJSONObject(day).getString("tajikTranscribed")
+            val tajik = data.getJSONObject(day).getString("tajik")
+            val name = data.getJSONObject(day).getString("name")
 
             tv_dua_arabic.text = arabic
             tv_dua_arabic_transcibed.text = tajikTranscribed
@@ -281,9 +280,6 @@ class HomeFragment : Fragment(){
                 })
     }
 
-
-
-
     private fun getAppPref(): AppPreference {
         return AppPreference(context!!)
     }
@@ -319,9 +315,13 @@ class HomeFragment : Fragment(){
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        getTimings()
+    }
     override fun onPause() {
-        super.onPause()
         timer?.cancel()
+        super.onPause()
 
     }
 

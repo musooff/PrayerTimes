@@ -14,7 +14,7 @@ import com.simurgh.prayertimes.surah.Verse
 @Database(entities = [
         QuranTitle::class,
         Verse::class,
-        PrayerTime::class], version = 1, exportSchema = true)
+        PrayerTime::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase(){
 
     abstract fun quranTitleDao(): QuranTitleDao

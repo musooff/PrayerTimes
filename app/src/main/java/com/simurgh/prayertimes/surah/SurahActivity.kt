@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.simurgh.prayertimes.R
 import com.simurgh.prayertimes.model.MyExtensions
 import com.simurgh.prayertimes.home.quran.QuranTitle
 import com.simurgh.prayertimes.model.AppPreference
+import com.simurgh.prayertimes.network.PrayerService
 import com.simurgh.prayertimes.room.AppDatabase
 import com.simurgh.prayertimes.room.dao.VerseDao
 import io.reactivex.Observable
@@ -92,34 +94,20 @@ class SurahActivity: Activity() {
                     runOnUiThread { showErrorDialog() }
                     return@fromCallable
                 }
-                val str_url = "http://api.alquran.cloud/surah/$titleNo/editions/quran-simple,tg.ayati"
-                try {
-                    val url = URL(str_url)
-                    val httpURLConnection = url.openConnection() as HttpURLConnection
-                    val inputStream = BufferedInputStream(httpURLConnection.inputStream)
-                    val result = MyExtensions.readStream(inputStream)
-
-                    val jsonObject = JSONObject(result)
-                    val data = jsonObject.getJSONArray("data")
-                    val numberOfAyahs = data.getJSONObject(0).getInt("numberOfAyahs")
-                    for (i in 0 until numberOfAyahs) {
-                        val verseNo = data.getJSONObject(0).getJSONArray("ayahs").getJSONObject(i).getInt("numberInSurah")
-                        val tajik = data.getJSONObject(1).getJSONArray("ayahs").getJSONObject(i).getString("text")
-                        var arabic = data.getJSONObject(0).getJSONArray("ayahs").getJSONObject(i).getString("text")
-                        if (titleNo != 0 && i == 0 && arabic.contains(BISMILLAH)){ // that's for bismillah verse, it's strange
-                            arabic = arabic.replace(BISMILLAH, "")
-                        }
-                        verseList.add(Verse(titleNo, verseNo, arabic, tajik))
-                    }
-                    verseDao.insert(verseList)
-
-                    verses = verseList.sortedBy { verse -> verse.number }
-
-                } catch (e: MalformedURLException) {
-                    e.printStackTrace()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
+                PrayerService().getVerses(titleNo)
+                        .doOnError { throwable ->  Log.e("MY_TAG_SURAH",throwable.message)}
+                        .subscribe({
+                            surahResult ->
+                            run {
+                                for (i in 0 until surahResult.data[0].numberOfAyahs) {
+                                    val arabic = surahResult.data[0].ayahs[i]
+                                    val tajik = surahResult.data[1].ayahs[i]
+                                    verseList.add(Verse(titleNo, arabic.numberInSurah, arabic.text!!, tajik.text!!))
+                                }
+                            }
+                            verseDao.insert(verseList)
+                            verses = verseList.sortedBy { verse -> verse.number }
+                        }, {t -> Log.e("MY_TAG_SURAH", t.message)})
 
             }
             else verses = verseList
@@ -177,8 +165,8 @@ class SurahActivity: Activity() {
         val id: TextView = view.findViewById(R.id.tv_id)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onBackPressed() {
         compositeDisposable.dispose()
+        super.onBackPressed()
     }
 }

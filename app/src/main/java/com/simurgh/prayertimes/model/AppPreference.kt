@@ -64,6 +64,7 @@ class AppPreference() {
         editor.putString("address", address).apply()
     }
 
+
     fun getMethod(): Int{
         return sharedPreferences.getInt("method", 2)
     }

@@ -22,4 +22,7 @@ interface PrayerTimeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(prayerTimes: List<PrayerTime>)
+
+    @Query("DELETE FROM PrayerTime")
+    fun deleteAll()
 }

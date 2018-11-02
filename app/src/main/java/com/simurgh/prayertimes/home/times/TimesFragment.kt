@@ -1,5 +1,7 @@
 package com.simurgh.prayertimes.home.times
 
+import android.app.Activity.RESULT_CANCELED
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -25,8 +27,20 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.Date
+import com.google.android.gms.location.places.ui.PlaceAutocomplete
+import com.google.android.gms.location.places.ui.PlaceAutocomplete.getStatus
+import com.google.android.gms.location.places.Place
+import android.content.Intent
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment
+import io.reactivex.Completable
+
 
 class TimesFragment: Fragment() {
+
+    companion object {
+        const val PLACE_AUTOCOMPLETE_REQUEST_CODE = 13
+
+    }
 
     private lateinit var appDatabase: AppDatabase
     lateinit var prayerTimeDao: PrayerTimeDao
@@ -62,8 +76,8 @@ class TimesFragment: Fragment() {
         month = today!!.month + 1
         year = today!!.year +1900
 
-        getTimings()
         setButtons()
+        setLocationUpdater()
 
     }
 
@@ -172,6 +186,15 @@ class TimesFragment: Fragment() {
         curName.setTextColor(resources.getColor(R.color.greenMain))
         curTime.setTextColor(resources.getColor(R.color.greenMain))
 
+        time_location.text = getAppPref().getAddress()
+
+    }
+
+    private fun setLocationUpdater(){
+        time_location.setOnClickListener{
+            val intent = PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(activity)
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE)
+        }
     }
 
     private fun timeCountDown(minute: Int, prayerTime: PrayerTime){
@@ -216,11 +239,17 @@ class TimesFragment: Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         disposable.clear()
+        disposable.dispose()
     }
     override fun onPause() {
-        super.onPause()
         timer?.cancel()
+        super.onPause()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getTimings()
     }
 
     private fun showErrorDialog(month: Int, year: Int){
@@ -257,7 +286,7 @@ class TimesFragment: Fragment() {
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe{
-                                Log.e("MY_TAG", "Data downloaded\n Updating times")
+                                Log.e("MY_TAG_TIMES", "Data downloaded\n Updating times")
                                 getTimings()
 
                             })
@@ -269,6 +298,36 @@ class TimesFragment: Fragment() {
 
     fun getAppPref(): AppPreference{
         return AppPreference(context!!)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            when (resultCode) {
+                RESULT_OK -> {
+                    val place = PlaceAutocomplete.getPlace(activity!!.applicationContext, data)
+                    updateLocation(place)
+                    Log.i("MY_TAG_TIMES", "Place: " + place.name)
+                }
+                PlaceAutocomplete.RESULT_ERROR -> {
+                    val status = PlaceAutocomplete.getStatus(activity!!.applicationContext, data)
+                    Log.i("MY_TAG_TIMES", status.statusMessage)
+
+                }
+                RESULT_CANCELED -> {
+                    // The user canceled the operation.
+                }
+            }
+        }
+    }
+
+    private fun updateLocation(place: Place){
+        getAppPref().setLatLon(place.latLng.latitude, place.latLng.longitude)
+        getAppPref().setAddress(place.name.toString())
+        Completable.fromAction {
+            prayerTimeDao.deleteAll()
+        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 
 }

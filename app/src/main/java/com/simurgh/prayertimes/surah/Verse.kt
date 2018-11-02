@@ -39,3 +39,12 @@ class DayVerse: Verse(){
 class VerseResult{
     var data: List<Verse> = ArrayList()
 }
+
+class Verses{
+    var numberOfAyahs: Int = 0
+    var ayahs: List<Verse> = ArrayList()
+}
+
+class SurahResult{
+    var data: List<Verses> = ArrayList()
+}
