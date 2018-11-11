@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.simurgh.prayertimes.R;
+import com.simurgh.prayertimes.home.more.settings.SettingsActivityOld;
 
 import androidx.fragment.app.Fragment;
 
@@ -70,7 +71,7 @@ public class MoreFragment extends Fragment {
         ll_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent settings = new Intent(getActivity(),SettingsActivity.class);
+                Intent settings = new Intent(getActivity(),SettingsActivityOld.class);
                 startActivity(settings);
             }
         });

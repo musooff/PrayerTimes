@@ -35,6 +35,7 @@
         android:layout_height="50dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:id="@+id/starting"
         android:src="@drawable/ic_bismillah"/>
     <pl.droidsonroids.gif.GifImageView
         android:layout_width="match_parent"

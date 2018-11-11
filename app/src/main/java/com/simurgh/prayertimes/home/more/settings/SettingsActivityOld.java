@@ -1,4 +1,4 @@
-package com.simurgh.prayertimes.home.more;
+package com.simurgh.prayertimes.home.more.settings;
 
 import android.os.Bundle;
 
@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * Created by moshe on 30/06/2017.
  */
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivityOld extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

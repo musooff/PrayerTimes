@@ -158,16 +158,24 @@ class SplashActivity: Activity(){
         val geoCoder = Geocoder(applicationContext, Locale.getDefault())
         try {
             addresses = geoCoder.getFromLocation(location.latitude, location.longitude, 1)
-            val address = addresses[0].locality
-            Log.e("MY_TAG_SPLASH", "Address is update to $address, Request downloading new times for $month/$year and $nextMonth/$yearOfNextMonth")
-            getAppPref().setLatLon(location.latitude, location.longitude)
-            getAppPref().setAddress(address)
+            if (addresses.isNotEmpty()){
+                val locality = addresses[0].locality
+                val address = addresses[0].getAddressLine(0)
+                Log.e("MY_TAG_SPLASH", "Address is update to $address, Request downloading new times for $month/$year and $nextMonth/$yearOfNextMonth")
+                getAppPref().setLatLon(location.latitude, location.longitude)
+                if (locality != null) getAppPref().setAddress(locality)
+                else getAppPref().setAddress(address)
 
-            month1downloaded = false
-            month2downloaded = false
+                month1downloaded = false
+                month2downloaded = false
 
-            request(month, year)
-            request(nextMonth, yearOfNextMonth)
+                request(month, year)
+                request(nextMonth, yearOfNextMonth)
+            }
+            else{
+                Toast.makeText(applicationContext, "Хатогие ба вучуд омад. Вактхои Душанберо бор мекунем!", Toast.LENGTH_LONG).show()
+                onFinished()
+            }
 
         } catch (e: IOException) {
             e.printStackTrace()
@@ -208,6 +216,7 @@ class SplashActivity: Activity(){
                     .setMessage(R.string.network_error_splash)
                     .setPositiveButton(R.string.button_retry) { _, _ -> restart() }
                     .setNegativeButton(R.string.button_exit){_,_ -> finish()}
+                    .setCancelable(false)
             builder.create().show()
         }
     }

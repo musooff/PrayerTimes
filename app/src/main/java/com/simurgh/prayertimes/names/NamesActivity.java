@@ -91,7 +91,8 @@ public class NamesActivity extends Activity implements MediaPlayer.OnPreparedLis
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
-                });
+                })
+                .setCancelable(false);
         builder.create().show();
     }
     private AppPreference getAppPref() {

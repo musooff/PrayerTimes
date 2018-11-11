@@ -140,7 +140,8 @@ public class LibraryActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         mAdapter.notifyDataSetChanged();
                     }
-                });
+                })
+                .setCancelable(false);
         builder.create().show();
     }
 

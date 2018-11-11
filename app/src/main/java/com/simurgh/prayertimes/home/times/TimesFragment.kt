@@ -258,6 +258,7 @@ class TimesFragment: Fragment() {
                 .setMessage(R.string.network_error_splash)
                 .setPositiveButton(R.string.button_retry) { _, _ -> request(month, year) }
                 .setNegativeButton(R.string.button_ok){dialog,_ -> dialog.dismiss()}
+                .setCancelable(false)
         builder.create().show()
     }
 

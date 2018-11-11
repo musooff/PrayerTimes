@@ -75,8 +75,7 @@ class SurahActivity: Activity() {
         transcribed = extras.getString(TRANSCRIBED)
         titleNo = extras.getInt( TITLE_NO)
 
-        title_name.text = name
-        title_transcribed.text = transcribed
+        startings()
 
         appDatabase = AppDatabase.getInstance(applicationContext)!!
         verseDao = appDatabase.verseDao()
@@ -84,6 +83,14 @@ class SurahActivity: Activity() {
         getVerses()
 
 
+    }
+
+    private fun startings(){
+        title_name.text = name
+        title_transcribed.text = transcribed
+        if (titleNo == 9){
+            starting.visibility = View.GONE
+        }
     }
 
     fun getVerses(){
@@ -96,14 +103,11 @@ class SurahActivity: Activity() {
                 }
                 PrayerService().getVerses(titleNo)
                         .doOnError { throwable ->  Log.e("MY_TAG_SURAH",throwable.message)}
-                        .subscribe({
-                            surahResult ->
-                            run {
-                                for (i in 0 until surahResult.data[0].numberOfAyahs) {
-                                    val arabic = surahResult.data[0].ayahs[i]
-                                    val tajik = surahResult.data[1].ayahs[i]
-                                    verseList.add(Verse(titleNo, arabic.numberInSurah, arabic.text!!, tajik.text!!))
-                                }
+                        .subscribe({ surahResult ->
+                            for (i in 0 until surahResult.data[0].numberOfAyahs) {
+                                val arabic = surahResult.data[0].ayahs[i]
+                                val tajik = surahResult.data[1].ayahs[i]
+                                verseList.add(Verse(titleNo, arabic.numberInSurah, arabic.text!!, tajik.text!!))
                             }
                             verseDao.insert(verseList)
                             verses = verseList.sortedBy { verse -> verse.number }
@@ -125,12 +129,11 @@ class SurahActivity: Activity() {
         builder.setTitle(R.string.network_error)
                 .setMessage(R.string.network_error_surah)
                 .setPositiveButton(R.string.button_retry) { _, _ ->
-                    run {
-                        getVerses()
-                        gif.visibility = View.VISIBLE
-                    }
+                    getVerses()
+                    gif.visibility = View.VISIBLE
                 }
                 .setNegativeButton(R.string.button_exit) {_,_ -> finish()}
+                .setCancelable(false)
         builder.create().show()
     }
 
@@ -151,7 +154,7 @@ class SurahActivity: Activity() {
         }
 
         override fun onBindViewHolder(holder: SurahViewHolder, position: Int) {
-            var verse = verses[position]
+            val verse = verses[position]
             holder.arabic.text = verse.text
             holder.translated.text = verse.tajik
             holder.id.text = verse.number.toString()
